@@ -290,57 +290,65 @@ def main():
     coordinates = np.append(coordinates, defaultdict(lambda: deque(maxlen=30)))
     # frame processing
 
-    def process_frame(frame: np.ndarray, fps) -> np.ndarray:
+    '''def process_frame(frame: np.ndarray, fps) -> np.ndarray:
         speed_labels = [], [], []
-        results = model_openvino(frame, imgsz=640, verbose=False)[0]
-        # results = model(frame)[0]
-        detections = sv.Detections.from_ultralytics(results)
-        detections = detections[np.isin(detections.class_id, selected_classes)] # filer on selected classes
-        detections = byte_tracker.update_with_detections(detections)
-        # detections = smoother.update_with_detections(detections)
+        zone_car_counts = [0]*len(zones)  # Initialize car counts for each zone
+        warning_message = ""
 
-        # copy frame before annotate                     
+        results = model_openvino(frame, imgsz=640, verbose=False)[0]
+        detections = sv.Detections.from_ultralytics(results)
+        detections = detections[np.isin(detections.class_id, selected_classes)]  # Filter on selected classes
+        detections = byte_tracker.update_with_detections(detections)
+
+    # Copy frame before annotating                     
         annotated_frame = frame.copy()
 
         for i, (zone,
-                zone_annotator,
-                box_annotator,
-                trace_annotator,
-                line_zone,
-                line_zone_annotator,
-                label_annotator,
-                line_start,
-                line_end,
-                view_transformer,
-                speed_label,
-                coordinate) in enumerate(zip(
-                    zones,
-                    zone_annotators,
-                    box_annotators,
-                    trace_annotators,
-                    line_zones,
-                    line_zone_annotators,
-                    label_annotators,
-                    lines_start,
-                    lines_end,
-                    view_transformers,
-                    speed_labels,
-                    coordinates)):
+            zone_annotator,
+            box_annotator,
+            trace_annotator,
+            line_zone,
+            line_zone_annotator,
+            label_annotator,
+            line_start,
+            line_end,
+            view_transformer,
+            speed_label,
+            coordinate) in enumerate(zip(
+                zones,
+                zone_annotators,
+                box_annotators,
+                trace_annotators,
+                line_zones,
+                line_zone_annotators,
+                label_annotators,
+                lines_start,
+                lines_end,
+                view_transformers,
+                speed_labels,
+                coordinates)):
 
             mask = zone.trigger(detections=detections)
             detections_filtered = detections[mask]
-            points = detections_filtered.get_anchors_coordinates(
-                    anchor=sv.Position.BOTTOM_CENTER)
-            # Intégrer le transformateur de vue dans un pipeline de détection existant
+            zone_car_counts[i] = len(detections_filtered)  # Count cars in this zone
+
+            points = detections_filtered.get_anchors_coordinates(anchor=sv.Position.BOTTOM_CENTER)
             points = view_transformer.transform_points(points=points).astype(int)
+
+        # Calculate distances between cars and check for closeness
+            for j, (point1, tracker_id1) in enumerate(zip(points, detections_filtered.tracker_id)):
+                for k, (point2, tracker_id2) in enumerate(zip(points, detections_filtered.tracker_id)):
+                    if j != k:
+                        distance = np.linalg.norm(point1 - point2)
+                        if distance < 50:  # Threshold for being "too close"
+                            warning_message += f"Cars {tracker_id1} and {tracker_id2} too close in zone {i+1}: {distance:.2f} pixels\n"
+
             for tracker_id, [_, y] in zip(detections_filtered.tracker_id, points):
                 coordinate[tracker_id].append(y)
 
-            # wait to have enough data
+        # Calculate speed and generate labels
             for tracker_id in detections_filtered.tracker_id:
                 if len(coordinate[tracker_id]) < fps/2:
-                    # print(coordinates[tracker_id], " - id :",
-                    #  tracker_id, 'len : ', len(coordinates[tracker_id]))
                     speed_label.append(f"#{tracker_id}")
                 else:
                     try:
@@ -350,34 +358,23 @@ def main():
                         time = len(coordinate[tracker_id]) / fps
                         speed = distance / time * 3.6
                         speed_label.append(f"{int(speed)} km/h")
-
                     except Exception as e:
                         speed_label.append(f"#{tracker_id}")
                         print(f"An error occurred: {e}")
-            # labels = [
-            # f"#{tracker_id} "
-            # for _,_,_,_,tracker_id in detections_filtered]
-            # line_zone.trigger(detections=detections_filtered)
-            annotated_frame = sv.draw_line(scene=annotated_frame,
-                                           start=line_start,
-                                           end=line_end,
-                                           color=colors.by_idx(i))
-            # annotated_frame = zone_annotator.annotate(scene=annotated_frame,
-            #  label=f"Dir. Ouest : {i+random.randint(0,100)}")
+
+        # Annotate frame
             direction_label = "Dir. West" if i == 0 else "Dir. East"
             annotated_frame = zone_annotator.annotate(
                 scene=annotated_frame,
                 label=f"{direction_label} : {line_zone.in_count}") if i == 0 else zone_annotator.annotate(
-                    scene=annotated_frame,
-                    label=f"{direction_label} : {line_zone.out_count}")
+                scene=annotated_frame,
+                label=f"{direction_label} : {line_zone.out_count}")
 
             annotated_frame = label_annotator.annotate(
                 scene=annotated_frame,
                 detections=detections_filtered,
                 labels=speed_label)
 
-            # annotated_frame=line_zone_annotator.annotate(
-            # annotated_frame,line_counter=line_zone )
             annotated_frame = box_annotator.annotate(
                 scene=annotated_frame,
                 detections=detections_filtered)
@@ -385,10 +382,138 @@ def main():
             annotated_frame = trace_annotator.annotate(
                 scene=annotated_frame,
                 detections=detections_filtered)
+
+            annotated_frame = sv.draw_line(scene=annotated_frame,
+                                           start=line_start,
+                                       end=line_end,
+                                       color=colors.by_idx(i))
+
             line_zone.trigger(detections=detections_filtered)
-            # print(line_zone.in_count)
-            # print(line_zone.out_count)
+
+    # Display total car count and warnings on the top of the screen
+        total_car_count = sum(zone_car_counts)
+        cv2.putText(annotated_frame, f"Total Cars: {total_car_count}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+    
+        if warning_message:
+            cv2.putText(annotated_frame, "WARNING: Cars too close!", (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+            print(warning_message)  # Also print the warning message in the backend
+
+        return annotated_frame'''
+    def process_frame(frame: np.ndarray, fps) -> np.ndarray:
+        speed_labels = [], [], []
+        zone_car_counts = [0] * len(zones)  # Initialize car counts for each zone
+        warning_message = ""
+
+        results = model_openvino(frame, imgsz=640, verbose=False)[0]
+        detections = sv.Detections.from_ultralytics(results)
+        detections = detections[np.isin(detections.class_id, selected_classes)]  # Filter on selected classes
+        detections = byte_tracker.update_with_detections(detections)
+
+    # Copy frame before annotating                     
+        annotated_frame = frame.copy()
+
+        for i, (zone,
+            zone_annotator,
+            box_annotator,
+            trace_annotator,
+            line_zone,
+            line_zone_annotator,
+            label_annotator,
+            line_start,
+            line_end,
+            view_transformer,
+            speed_label,
+            coordinate) in enumerate(zip(
+                zones,
+                zone_annotators,
+                box_annotators,
+                trace_annotators,
+                line_zones,
+                line_zone_annotators,
+                label_annotators,
+                lines_start,
+                lines_end,
+                view_transformers,
+                speed_labels,
+                coordinates)):
+
+            mask = zone.trigger(detections=detections)
+            detections_filtered = detections[mask]
+            zone_car_counts[i] = len(detections_filtered)  # Count cars in this zone
+
+            points = detections_filtered.get_anchors_coordinates(anchor=sv.Position.BOTTOM_CENTER)
+            points = view_transformer.transform_points(points=points).astype(int)
+
+        # Calculate distances between cars and check for closeness
+            for j, (point1, tracker_id1) in enumerate(zip(points, detections_filtered.tracker_id)):
+                for k, (point2, tracker_id2) in enumerate(zip(points, detections_filtered.tracker_id)):
+                    if j != k:
+                        distance = np.linalg.norm(point1 - point2)
+                        if distance < 50:  # Threshold for being "too close"
+                            warning_message += f"Cars {tracker_id1} and {tracker_id2} too close in zone {i+1}: {distance:.2f} pixels\n"
+
+            for tracker_id, [_, y] in zip(detections_filtered.tracker_id, points):
+                coordinate[tracker_id].append(y)
+
+        # Calculate speed and generate labels
+            for tracker_id in detections_filtered.tracker_id:
+                if len(coordinate[tracker_id]) < fps/2:
+                    speed_label.append(f"#{tracker_id}")
+                else:
+                    try:
+                        coordinate_start = coordinate[tracker_id][-1]
+                        coordinate_end = coordinate[tracker_id][0]
+                        distance = abs(coordinate_start - coordinate_end)
+                        time = len(coordinate[tracker_id]) / fps
+                        speed = distance / time * 3.6
+                        speed_label.append(f"{int(speed)} km/h")
+                    except Exception as e:
+                        speed_label.append(f"#{tracker_id}")
+                        print(f"An error occurred: {e}")
+
+        # Annotate frame
+            direction_label = "Dir. West" if i == 0 else "Dir. East"
+            annotated_frame = zone_annotator.annotate(
+                scene=annotated_frame,
+                label=f"{direction_label} : {line_zone.in_count}") if i == 0 else zone_annotator.annotate(
+                scene=annotated_frame,
+                label=f"{direction_label} : {line_zone.out_count}")
+
+            annotated_frame = label_annotator.annotate(
+                scene=annotated_frame,
+                detections=detections_filtered,
+                labels=speed_label)
+
+            annotated_frame = box_annotator.annotate(
+                scene=annotated_frame,
+                detections=detections_filtered)
+
+            annotated_frame = trace_annotator.annotate(
+                scene=annotated_frame,
+                detections=detections_filtered)
+
+            annotated_frame = sv.draw_line(scene=annotated_frame,
+                                       start=line_start,
+                                       end=line_end,
+                                       color=colors.by_idx(i))
+
+            line_zone.trigger(detections=detections_filtered)
+
+    # Display total car count and warnings in the center of the screen
+        total_car_count = sum(zone_car_counts)
+        height, width, _ = annotated_frame.shape
+        text_position = (width - 300, 50)
+        warning_text_position = (width - 500, 100)
+    
+        cv2.putText(annotated_frame, f"Total Cars: {total_car_count}", text_position, cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+    
+        if warning_message:
+            cv2.putText(annotated_frame, "WARNING: Cars too close!", warning_text_position, cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+            print(warning_message)  # Also print the warning message in the backend
+
         return annotated_frame
+
+
     # for direct show
     cap = cv2.VideoCapture(VIDEO)
     # fps = int(cap.get(cv2.CAP_PROP_FPS))
