@@ -3,7 +3,11 @@ opencv-python-headless
 openvino
 openvino-dev
 openvino-telemetry
-supervision
+supervision==0.20.0
 ultralytics
 vidgear
 yt-dlp
+numpy==1.24.2
+jinja2==3.1.2
+fastapi==0.95.0
+uvicorn==0.22.0
