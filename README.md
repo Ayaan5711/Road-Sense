@@ -99,7 +99,6 @@ In order to run FastAPI server run below code:
 2. 
     ```bash
     uvicorn app:app --reload
-
     ```
 
 3. Naviagte to ```http://127.0.0.1:8000/video```
