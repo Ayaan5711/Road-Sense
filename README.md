@@ -92,13 +92,16 @@ For more details and documentation, please visit the [project repository](https:
 
 ## Note from Zaib
 In order to run FastAPI server run below code:
-1. 
+1. install dependencies.
     ```bash
     pip install -r requirements.txt
     ```
-2. 
+2. run fastapi app
     ```bash
     uvicorn app:app --reload
     ```
 
-3. Naviagte to ```http://127.0.0.1:8000/video```
+3. Naviagte to 
+    ```
+    http://127.0.0.1:8000/video
+    ```
