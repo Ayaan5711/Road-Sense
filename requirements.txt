@@ -3,7 +3,7 @@ opencv-python-headless
 openvino
 openvino-dev
 openvino-telemetry
-supervision
+supervision==0.20.0
 ultralytics
 vidgear
 yt-dlp
