@@ -1,0 +1,9 @@
+opencv-python
+opencv-python-headless
+openvino
+openvino-dev
+openvino-telemetry
+supervision
+ultralytics
+vidgear
+yt-dlp
