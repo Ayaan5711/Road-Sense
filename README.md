@@ -88,3 +88,18 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 For more details and documentation, please visit the [project repository](https://github.com/yourusername/road-sense).
 
+
+
+## Note from Zaib
+In order to run FastAPI server run below code:
+1. 
+    ```bash
+    pip install -r requirements.txt
+    ```
+2. 
+    ```bash
+    uvicorn app:app --reload
+
+    ```
+
+3. Naviagte to ```http://127.0.0.1:8000/video```
