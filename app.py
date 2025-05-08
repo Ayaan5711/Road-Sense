@@ -13,6 +13,10 @@ import supervision as sv
 from fastapi import FastAPI, Request
 from fastapi.responses import StreamingResponse, HTMLResponse
 from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
+
+
+
 
 app = FastAPI()
 
@@ -73,13 +77,24 @@ templates = Jinja2Templates(directory="templates")  # Ensure you create this dir
 
 @app.get("/", response_class=HTMLResponse)
 def home(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
-
+    # Read the content of the txt file
+    with open("vehicle-tracking.txt", "r") as f:
+        txt_data = f.readlines()
+    return templates.TemplateResponse("index.html", {"request": request, "txt_data": txt_data})
 
 
 @app.get("/video")
 def video_feed():
     return StreamingResponse(generate_frames(), media_type="multipart/x-mixed-replace; boundary=frame")
 
+@app.get("/log")
+def get_log_data():
+    with open("vehicle-tracking.txt", "r") as f:
+        lines = f.readlines()
+    # Return reversed lines (newest first)
+    return {"lines": lines[::-1]}
 
+
+# Mount static folder for CSS
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
