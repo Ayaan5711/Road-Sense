@@ -3,13 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <title>Live Stream with Logs</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+
     <link rel="stylesheet" href="../static/style.css" />
   </head>
   <body>
     <div class="container">
       <!-- Left Panel -->
       <div class="left-panel">
-        <h2 class="panel-heading">All Cars Logs</h2>
+        <div class="panel-heading">
+          <span>All Cars Logs</span>
+          <a href="/"><i class="fas fa-home heading-icon"></i></a>
+        </div>
+
         <div class="panel-content" id="log-container">
           <!-- Logs will load here -->
         </div>
@@ -22,7 +31,11 @@
 
       <!-- Right Panel -->
       <div class="right-panel">
-        <h2 class="panel-heading">Accident Data</h2>
+        <div class="panel-heading">
+          <span>Accident Data</span>
+
+          <a href="/"><i class="fas fa-home heading-icon"></i></a>
+        </div>
         <div class="panel-content" id="accident-container">
           <!-- Accident logs will load here -->
         </div>

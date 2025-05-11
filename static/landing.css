@@ -1,0 +1,40 @@
+body,
+html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: url("https://hdwallsbox.com/wallpapers/l/1920x1080/47/landscapes-trees-fences-roads-greg-martin-cliff-1920x1080-46475.jpg") no-repeat center center fixed;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.landing-content {
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 40px;
+  border-radius: 10px;
+  text-align: center;
+  color: white;
+}
+
+.landing-content h1 {
+  margin-bottom: 40px;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  font-size: 2.5rem;
+}
+
+.landing-content a.button {
+  background-color: #a9a600;
+  padding: 12px 24px;
+  border-radius: 5px;
+  color: white;
+  text-decoration: none;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  font-size: 1.2rem;
+  transition: background 0.3s ease;
+}
+
+.landing-content a.button:hover {
+  background-color: rgb(123, 115, 0)
+}
