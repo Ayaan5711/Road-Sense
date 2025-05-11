@@ -76,6 +76,10 @@ def generate_frames():
 templates = Jinja2Templates(directory="templates")  # Ensure you create this directory
 
 @app.get("/", response_class=HTMLResponse)
+def landing_page(request: Request):
+    return templates.TemplateResponse("landing.html", {"request": request})
+
+@app.get("/live-streaming", response_class=HTMLResponse)
 def home(request: Request):
     # Read the content of the txt file
     with open("vehicle-tracking.txt", "r") as f:

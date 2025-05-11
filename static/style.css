@@ -9,12 +9,23 @@ body {
 }
 
 .panel-heading {
-  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* width: 100%; */
+  /* gap: 10px; */
+  font-weight: bold;
   padding: 10px;
   background-color: #e0e0e0;
-  font-weight: bold;
   border-bottom: 1px solid #ccc;
+  font-size: 1.2rem;
 }
+
+.heading-icon {
+  font-size: 1.2rem;
+  color: #333;
+}
+
 
 .panel-content {
   flex-grow: 1;
