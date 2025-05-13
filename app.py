@@ -117,6 +117,15 @@ def get_log_data():
     return {"lines": lines[::-1]}
 
 
+@app.get("/accident-log")
+def get_accident_data():
+    try:
+        with open("accident-log.txt", "r") as f:
+            lines = f.readlines()
+        return {"lines": lines[::-1]}
+    except FileNotFoundError:
+        return {"lines": ["No accident data available."]}
+
 # Mount static folder for CSS
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
