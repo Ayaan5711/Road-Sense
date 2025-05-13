@@ -1,107 +1,139 @@
-# Road-Sense: A Smart Traffic Monitoring System
+
+# Road-Sense: A Smart Traffic Monitoring System 🚦
 
 ## Overview
 
-**Road-Sense** is a real-time traffic monitoring and speed estimation system designed to process video input from traffic cameras. The system utilizes advanced technologies to provide comprehensive traffic analysis, including object detection, speed estimation, vehicle type differentiation, and congestion detection. Built using YOLO for object detection, OpenVINO for accelerated inference, and custom logic for various traffic monitoring features, Road-Sense enhances traffic management and safety.
+**Road-Sense** is a real-time intelligent traffic monitoring and accident detection system. It processes live or recorded video feeds to detect, track, and analyze vehicles using deep learning. The system includes features like speed estimation, vehicle classification, congestion detection, and accident alerts—presented via a FastAPI-powered live dashboard.
 
-## Features
+Built with:
 
-### Real-time Object Detection and Tracking
-- Detects and tracks vehicles (car, motorcycle, bus, truck) from live traffic camera feeds.
-- Provides a real-time count of vehicles in each lane.
+* **YOLOv8** for vehicle and accident detection
+* **OpenCV** and **Supervision** for video processing and annotation
+* **FastAPI** for serving live video streams and insights
 
-### Speed Estimation
-- Calculates and displays the speed of each detected vehicle.
-- Alerts when vehicles exceed the speed limit.
+---
 
-### Vehicle Type Differentiation
-- Differentiates between various types of vehicles.
-- Displays counts by vehicle type for detailed traffic analysis.
+## 🔍 Key Features
 
-### Traffic Congestion Detection
-- Monitors traffic density in each zone.
-- Detects and alerts when congestion is identified.
+### 🚗 Real-Time Vehicle Detection & Tracking
 
-### Zone-Based Vehicle Heatmaps
-- Generates heatmaps to visualize vehicle activity across different zones.
-- Facilitates zone-specific traffic pattern analysis.
+* Detects and tracks vehicles in traffic footage using YOLOv8
+* Counts and traces vehicles across defined zones
 
-### Proximity Alerts
-- Detects when vehicles are too close to each other.
-- Provides on-screen and backend alerts with distance and zone information.
+### 🛑 Accident Detection
 
-## Getting Started
+* Uses a separate YOLOv8 model to detect accidents
+* Displays visual alerts on live stream
 
-To get started with Road-Sense, clone the repository and follow the instructions below:
+### 📏 Speed Estimation
 
-### Installation
+* Estimates vehicle speed based on motion across zones
+* Issues alerts when speed limits are exceeded
 
-1. **Clone the Repository:**
+### 🛻 Vehicle Type Differentiation
 
-    ```bash
-    git clone https://github.com/yourusername/road-sense.git
-    ```
+* Differentiates between cars, bikes, buses, trucks
+* Aggregates counts per vehicle type
 
-2. **Navigate to the Project Directory:**
+### 🚥 Traffic Congestion Detection
 
-    ```bash
-    cd road-sense
-    ```
+* Monitors density and flow per lane/zone
+* Detects and warns of potential congestion
 
-3. **Install Dependencies:**
+### 🧊 Zone-Based Heatmaps *(optional enhancement)*
 
-    ```bash
-    pip install -r requirements.txt
-    ```
+* Visualizes traffic patterns over time
 
-### Configuration
+### ⚠️ Proximity Alerts
 
-- Ensure you have a traffic camera feed URL or video file.
-- Update the configuration settings in `config.py` as needed.
+* Warns when vehicles are dangerously close
 
-### Running the System
+---
 
-1. **Run the Script:**
+## 🚀 Getting Started
 
-    ```bash
-    python main.py
-    ```
+### 1. Clone the Repository
 
-2. **Monitor Output:**
+```bash
+git clone https://github.com/yourusername/road-sense.git
+cd road-sense
+```
 
-    - The system will display real-time video with annotated vehicle information.
-    - Alerts and statistics will be shown on the video feed.
+### 2. Install Requirements
 
-## Contributing
+```bash
+pip install -r requirements.txt
+```
 
-Contributions are welcome! If you have suggestions or improvements, please open an issue or submit a pull request.
+### 3. Add Models
 
-## License
+Place your models in the `models/` directory:
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+* `yolov8s.pt` – for vehicle detection
+* `best.pt` – your custom accident detection model
 
-## Acknowledgements
+---
 
-- YOLO for object detection
-- OpenVINO for accelerated inference
-- OpenCV for image processing
+## 🧪 Running the Application
 
-For more details and documentation, please visit the [project repository](https://github.com/yourusername/road-sense).
+### A. Run the FastAPI Server
+
+```bash
+uvicorn app:app --reload
+```
+
+### B. Access the Live Stream
+
+Open your browser and navigate to:
+
+```
+http://127.0.0.1:8000/
+```
+
+* `/` – Landing page
+* `/live-streaming` – Dashboard with vehicle logs
+* `/video` – Live annotated video stream
+
+---
+
+## 🛠 Configuration
+
+Update `app.py` or relevant config files to:
+
+* Set your **video source** (YouTube link, IP camera, or file path)
+* Adjust **zones** or **speed thresholds** as needed
+
+---
+
+## 🧾 Output
+
+* **Live Annotated Video Feed**
+  Displays:
+
+  * Vehicle bounding boxes with IDs, types, and speeds
+  * Accident detection alerts in real time
+
+* **`vehicle-tracking.txt`**
+  Logs vehicle detections, tracking IDs, zone transitions, and speed estimates.
+
+* **`accident-log.txt`**
+  Logs accident events detected by the model, including timestamps and zone locations.
+
+---
 
 
+## 📄 License
 
-## Note from Zaib
-In order to run FastAPI server run below code:
-1. install dependencies.
-    ```bash
-    pip install -r requirements.txt
-    ```
-2. run fastapi app
-    ```bash
-    uvicorn app:app --reload
-    ```
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-3. Naviagte to 
-    ```
-    http://127.0.0.1:8000/video
-    ```
+---
+
+## 🙏 Acknowledgements
+
+* [YOLOv8 by Ultralytics](https://github.com/ultralytics/ultralytics)
+* [Supervision by Roboflow](https://github.com/roboflow/supervision)
+* [OpenCV](https://opencv.org/)
+* [FastAPI](https://fastapi.tiangolo.com/)
+* Special thanks to the traffic safety research community
+
+

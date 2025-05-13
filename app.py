@@ -2,7 +2,7 @@ import cv2
 import time
 import numpy as np
 from collections import defaultdict, deque
-from src.video_utils import extract_video_url, video_manifest_extractor
+from src.video_utils import video_manifest_extractor
 from src.zone_utils import create_zones
 from src.tracking_utils import initialize_tracking
 from src.processing import process_frame
@@ -23,9 +23,11 @@ app = FastAPI()
 # Global variables
 SOURCE = "https://youtu.be/z545k7Tcb5o"
 VIDEO = video_manifest_extractor(SOURCE)
-PATH = "models/yolov8s.pt"
-MODEL = YOLO(PATH)
-CLASS_NAMES_DICT = MODEL.model.names
+VEHICLE_MODEL_PATH = "models/yolov8s.pt"
+ACCIDENT_MODEL_PATH = "models/best.pt"
+VEHICLE_MODEL = YOLO(VEHICLE_MODEL_PATH)
+ACCIDENT_MODEL = YOLO(ACCIDENT_MODEL_PATH)
+
 colors = sv.ColorPalette.LEGACY
 video_info = sv.VideoInfo.from_video_path(VIDEO)
 coef = video_info.width / 1280
@@ -34,7 +36,9 @@ x1 = [-160, -25, 971]; y1 = [405, 710, 671]
 x2 = [112, 568, 1480]; y2 = [503, 710, 671]
 x3 = [557, 706, 874];  y3 = [195, 212, 212]
 x4 = [411, 569, 749];  y4 = [195, 212, 212]
-SOURCES, TARGETS, zone_annotators, box_annotators, trace_annotators, line_zones, line_zone_annotators, label_annotators, lines_start, lines_end, zones, *_ = create_zones(x1, y1, x2, y2, x3, y3, x4, y4, coef, video_info, colors)
+SOURCES, TARGETS, zone_annotators, box_annotators, trace_annotators, line_zones, \
+    line_zone_annotators, label_annotators, lines_start, lines_end, zones, \
+    x1, y1, x2, y2, x3, y3, x4, y4 = create_zones(x1, y1, x2, y2, x3, y3, x4, y4, coef, video_info, colors)
 
 byte_tracker, fps_monitor = initialize_tracking(video_info)
 view_transformers = [ViewTransformer(s, t) for s, t in zip(SOURCES, TARGETS)]
@@ -53,11 +57,26 @@ def generate_frames():
             break
 
         processed = process_frame(
-            frame, int(fps), colors, coordinates, view_transformers, byte_tracker,
-            selected_classes, MODEL, SOURCES, TARGETS,
-            zone_annotators, box_annotators, trace_annotators,
-            line_zones, line_zone_annotators, label_annotators,
-            lines_start, lines_end, zones
+            frame=frame,
+            fps=int(fps),
+            colors=colors,
+            coordinates=coordinates,
+            view_transformers=view_transformers,
+            byte_tracker=byte_tracker,
+            selected_classes=selected_classes,
+            vehicle_model=VEHICLE_MODEL,
+            accident_model=ACCIDENT_MODEL,
+            SOURCES=SOURCES,
+            TARGETS=TARGETS,
+            zone_annotators=zone_annotators,
+            box_annotators=box_annotators,
+            trace_annotators=trace_annotators,
+            line_zones=line_zones,
+            line_zone_annotators=line_zone_annotators,
+            label_annotators=label_annotators,
+            lines_start=lines_start,
+            lines_end=lines_end,
+            zones=zones
         )
 
         ret, buffer = cv2.imencode('.jpg', processed)
@@ -69,7 +88,6 @@ def generate_frames():
         time.sleep(max(1/25 - (time.time() - start_time), 0))
     
     cap.release()
-
 
 
 
