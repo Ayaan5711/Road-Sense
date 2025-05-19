@@ -107,7 +107,7 @@ def home(request: Request):
     # Read the content of the txt file
     with open("vehicle-tracking.txt", "r") as f:
         txt_data = f.readlines()
-    return templates.TemplateResponse("index.html", {"request": request, "txt_data": txt_data})
+    return templates.TemplateResponse("tracking.html", {"request": request, "txt_data": txt_data})
 
     
 @app.get("/video")
@@ -116,10 +116,13 @@ def video_feed():
 
 @app.get("/log")
 def get_log_data():
-    with open("vehicle-tracking.txt", "r") as f:
-        lines = f.readlines()
-    # Return reversed lines (newest first)
-    return {"lines": lines[::-1]}
+    try:
+        with open("vehicle-tracking.txt", "r") as f:
+            lines = f.readlines()
+        # Return lines in chronological order (oldest first)
+        return {"lines": lines}
+    except FileNotFoundError:
+        return {"lines": ["No vehicle data available."]}
 
 
 @app.get("/accident-log")
