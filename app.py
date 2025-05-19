@@ -97,6 +97,11 @@ templates = Jinja2Templates(directory="templates")  # Ensure you create this dir
 def landing_page(request: Request):
     return templates.TemplateResponse("landing.html", {"request": request})
 
+
+@app.get("/camera-angles", response_class=HTMLResponse)
+def camera_angles(request: Request):
+    return templates.TemplateResponse("cameraAngles.html", {"request": request})
+
 @app.get("/live-streaming", response_class=HTMLResponse)
 def home(request: Request):
     # Read the content of the txt file
@@ -104,7 +109,7 @@ def home(request: Request):
         txt_data = f.readlines()
     return templates.TemplateResponse("index.html", {"request": request, "txt_data": txt_data})
 
-
+    
 @app.get("/video")
 def video_feed():
     return StreamingResponse(generate_frames(), media_type="multipart/x-mixed-replace; boundary=frame")
