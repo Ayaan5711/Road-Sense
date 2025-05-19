@@ -2,13 +2,94 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Live Stream Landing</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Advanced vehicle tracking and road safety monitoring system">
+    <title>RoadSense - Intelligent Vehicle Tracking System</title>
     <link rel="stylesheet" href="../static/landing.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   </head>
   <body>
+    <!-- Navigation -->
+    <nav class="navbar">
+      <div class="nav-brand">
+          <img src="../static/assets/logo.png" alt="logo" class="website-logo">
+          <span>RoadSense</span>
+      </div>
+      <div class="nav-links">
+          <a href="#features">Features</a>
+          <a href="#about">About</a>
+          <a href="#contact">Contact</a>
+      </div>
+  </nav>
+
+    <!-- Background video -->
+    <video autoplay muted loop id="bg-video">
+      <source src="../static/assets/video.mp4" type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
+
+    <!-- Main content -->
     <div class="landing-content">
-      <h1>Vehicle Tracking Dashboard</h1>
-      <a href="/live-streaming" class="button">Start Live Streaming</a>
+      <h1>Intelligent Vehicle Tracking System</h1>
+      <p class="tagline">Advanced AI-powered road monitoring for enhanced safety and security</p>
+      <div class="cta-buttons">
+        <a href="/camera-angles" class="button primary">
+          <i class="fas fa-video"></i> Start Car Monitoring
+        </a>
+        <a href="#demo" class="button secondary">
+          <i class="fas fa-play"></i> Watch Demo
+        </a>
+      </div>
     </div>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+      <div class="feature-grid">
+        <div class="feature-card">
+          <i class="fas fa-car-crash"></i>
+          <h3>Accident Detection</h3>
+          <p>Real-time monitoring and instant alerts for potential accidents</p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-tachometer-alt"></i>
+          <h3>Speed Monitoring</h3>
+          <p>Advanced speed detection and violation reporting</p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-camera"></i>
+          <h3>Live Surveillance</h3>
+          <p>24/7 video monitoring with AI-powered analysis</p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-chart-line"></i>
+          <h3>Analytics Dashboard</h3>
+          <p>Comprehensive traffic and incident analytics</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h4>Contact Us</h4>
+          <p><i class="fas fa-envelope"></i> info@roadsense.com</p>
+          <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+        </div>
+        <div class="footer-section">
+          <h4>Follow Us</h4>
+          <div class="social-links">
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-linkedin"></i></a>
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 RoadSense. All rights reserved.</p>
+      </div>
+    </footer>
   </body>
 </html>

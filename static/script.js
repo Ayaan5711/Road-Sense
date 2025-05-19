@@ -66,6 +66,7 @@ async function fetchAccidentLog() {
   }
 }
 
+
 setInterval(fetchLog, 3000);
 setInterval(fetchAccidentLog, 3000);
 
