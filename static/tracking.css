@@ -12,7 +12,7 @@ html, body {
   margin: 0;
   padding: 0;
   height: 100%;
-  overflow: hidden;
+  overflow-y: auto;
 }
 
 body {
@@ -21,42 +21,22 @@ body {
   color: var(--text-color);
 }
 
-.main-header {
-  background-color: #2c3e50;
-  color: white;
-  padding: 1rem 2rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.main-header h1 {
-  margin: 0;
-  font-size: 1.5rem;
-}
-
-.home-link {
-  color: white;
-  text-decoration: none;
-  font-size: 1.2rem;
-}
 
 .container {
   display: flex;
-  height: calc(100vh - 70px);
-  position: relative;
+  flex-direction: column;
+  min-height: 100vh;
   padding-top: 70px;
-  overflow: hidden;
+  position: relative;
 }
 
 .panel-toggle {
-  position: absolute;
-  bottom: 5px;
+  position: fixed;
+  bottom: 10px;
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  background-color: var(--text-color);
+  background-color: var(--background-dark);
   color: var(--light-text);
   padding: 1rem 1.5rem;
   cursor: pointer;
@@ -66,6 +46,7 @@ body {
   backdrop-filter: blur(10px);
   font-weight: 500;
 }
+
 
 .panel-toggle:hover {
   background-color: var(--primary-color);
@@ -115,6 +96,7 @@ body {
   transition: transform 0.3s ease;
   z-index: 90;
   border-radius: 0 8px 8px 0;
+  /* transform: translateX(-100%); */
   visibility: hidden;
   display: flex;
   flex-direction: column;
@@ -127,6 +109,7 @@ body {
 
 .right-panel {
   right: 0;
+  /* left: auto; */
   transform: translateX(100%);
   border-radius: 8px 0 0 8px;
 }
@@ -175,29 +158,34 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  /* margin: 0 10px; */
+  padding: 10px;
   /* border-radius: 8px; */
   overflow: hidden;
   position: relative;
 }
 
 .video-container {
-  width: 100%;
-  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 85%;
+  height: 90%;
   position: relative;
 }
 
 .video-container img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
+  width: 85%;
+  height: 90%;
+  object-fit: cover;
+  border-radius: 10px;
+
 }
 
 .status-indicator {
   position: absolute;
   top: 1rem;
-  right: 1rem;
-  background-color: rgba(0, 0, 0, 0.7);
+  right: -5rem;
+  background-color: rgba(73, 73, 73, 0.7);
   color: white;
   padding: 0.5rem 1rem;
   border-radius: 20px;
@@ -250,4 +238,285 @@ body {
 
 .panel-content::-webkit-scrollbar-thumb:hover {
   background: #555;
+}
+
+/* New Panel Styles */
+#accident-panel {
+    width: calc(100% - 100px);
+    padding: 2rem;
+    background: #ffffff;
+    margin: 1rem 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Traffic Panel Styles */
+.zone-card {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.zone-stats {
+    margin: 1rem 0;
+}
+
+.density-low {
+    color: #10b981;
+    font-weight: 600;
+}
+
+.density-medium {
+    color: #f59e0b;
+    font-weight: 600;
+}
+
+.density-high {
+    color: #ef4444;
+    font-weight: 600;
+}
+
+.breakdown-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+/* Alert Panel Styles */
+.alert-section {
+    margin-bottom: 1.5rem;
+}
+
+.alert-item {
+    background: white;
+    padding: 1rem;
+    border-radius: 6px;
+    margin-bottom: 0.5rem;
+    border-left: 4px solid #3b82f6;
+}
+
+.alert-item.accident {
+    border-left-color: #ef4444;
+}
+
+.alert-item small {
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+/* Accident Detection Panel Styles */
+.accident-detection-card {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.accident-header {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.confidence-badge {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    backdrop-filter: blur(5px);
+}
+
+.accident-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    padding: 1.5rem;
+}
+
+.accident-image {
+    width: 100%;
+    height: 300px;
+    background: #f3f4f6;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.accident-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.accident-detection-card .accident-image .no-snapshot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #000000;
+    text-align: center;
+    padding: 2rem;
+    width: 100%;
+    height: 100%;
+    background: #f3f4f6;
+    z-index: 100;
+}
+
+.accident-detection-card .accident-image .no-snapshot i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: #9ca3af;
+}
+
+.accident-detection-card .accident-image .no-snapshot p {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin: 0;
+}
+
+.accident-details {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.accident-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: auto;
+}
+
+.replay-btn,
+.dispatch-btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.replay-btn {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+}
+
+.dispatch-btn {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+}
+
+.replay-btn:hover,
+.dispatch-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Analytics Panel Styles */
+#analytics-panel {
+    width: calc(100% - 100px);
+    padding: 2rem;
+    background: #ffffff;
+    margin: 1rem 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+}
+
+.chart-container {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+}
+
+.chart-container:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.chart-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+/* Chart-specific styles */
+.vehicle-count-chart {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+}
+
+.speed-distribution-chart {
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+}
+
+.vehicle-type-chart {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+}
+
+.congestion-chart {
+    background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    #analytics-panel {
+        grid-template-columns: 1fr;
+    }
+    
+    .accident-content {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    #accident-panel,
+    #analytics-panel {
+        width: calc(100% - 20px);
+        margin: 1rem 10px;
+        padding: 1rem;
+    }
+    
+    .accident-actions {
+        flex-direction: column;
+    }
+    
+    .chart-container {
+        padding: 1rem;
+    }
+}
+
+.no-snapshot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #000000;
+    text-align: center;
+    padding: 2rem;
+}
+
+.no-snapshot i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: #9ca3af;
+}
+
+.no-snapshot p {
+    font-size: 1.1rem;
+    font-weight: 500;
 }

@@ -14,11 +14,16 @@ from fastapi import FastAPI, Request
 from fastapi.responses import StreamingResponse, HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-
-
+from datetime import datetime
+import random
+from typing import List, Dict
+import json
 
 
 app = FastAPI()
+
+# Mount static folder for CSS and other static files
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Global variables
 SOURCE = "https://youtu.be/z545k7Tcb5o"
@@ -49,44 +54,57 @@ fps = video_info.fps
 
 def generate_frames():
     cap = cv2.VideoCapture(VIDEO)
+    if not cap.isOpened():
+        print("Error: Could not open video source")
+        return
 
     while True:
-        start_time = time.time()
-        ret, frame = cap.read()
-        if not ret:
-            break
+        try:
+            start_time = time.time()
+            ret, frame = cap.read()
+            if not ret:
+                print("Error: Could not read frame")
+                break
 
-        processed = process_frame(
-            frame=frame,
-            fps=int(fps),
-            colors=colors,
-            coordinates=coordinates,
-            view_transformers=view_transformers,
-            byte_tracker=byte_tracker,
-            selected_classes=selected_classes,
-            vehicle_model=VEHICLE_MODEL,
-            accident_model=ACCIDENT_MODEL,
-            SOURCES=SOURCES,
-            TARGETS=TARGETS,
-            zone_annotators=zone_annotators,
-            box_annotators=box_annotators,
-            trace_annotators=trace_annotators,
-            line_zones=line_zones,
-            line_zone_annotators=line_zone_annotators,
-            label_annotators=label_annotators,
-            lines_start=lines_start,
-            lines_end=lines_end,
-            zones=zones
-        )
+            processed = process_frame(
+                frame=frame,
+                fps=int(fps),
+                colors=colors,
+                coordinates=coordinates,
+                view_transformers=view_transformers,
+                byte_tracker=byte_tracker,
+                selected_classes=selected_classes,
+                vehicle_model=VEHICLE_MODEL,
+                accident_model=ACCIDENT_MODEL,
+                SOURCES=SOURCES,
+                TARGETS=TARGETS,
+                zone_annotators=zone_annotators,
+                box_annotators=box_annotators,
+                trace_annotators=trace_annotators,
+                line_zones=line_zones,
+                line_zone_annotators=line_zone_annotators,
+                label_annotators=label_annotators,
+                lines_start=lines_start,
+                lines_end=lines_end,
+                zones=zones
+            )
 
-        ret, buffer = cv2.imencode('.jpg', processed)
-        frame = buffer.tobytes()
+            ret, buffer = cv2.imencode('.jpg', processed)
+            if not ret:
+                print("Error: Could not encode frame")
+                continue
 
-        yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+            frame = buffer.tobytes()
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
-        time.sleep(max(1/25 - (time.time() - start_time), 0))
-    
+            # Control frame rate
+            time.sleep(max(1/25 - (time.time() - start_time), 0))
+
+        except Exception as e:
+            print(f"Error in frame generation: {str(e)}")
+            continue
+
     cap.release()
 
 
@@ -112,7 +130,14 @@ def home(request: Request):
     
 @app.get("/video")
 def video_feed():
-    return StreamingResponse(generate_frames(), media_type="multipart/x-mixed-replace; boundary=frame")
+    try:
+        return StreamingResponse(
+            generate_frames(),
+            media_type="multipart/x-mixed-replace; boundary=frame"
+        )
+    except Exception as e:
+        print(f"Error in video feed: {str(e)}")
+        return {"error": "Video feed error"}, 500
 
 @app.get("/log")
 def get_log_data():
@@ -134,6 +159,123 @@ def get_accident_data():
     except FileNotFoundError:
         return {"lines": ["No accident data available."]}
 
-# Mount static folder for CSS
-app.mount("/static", StaticFiles(directory="static"), name="static")
+@app.get("/api/traffic-stats")
+def get_traffic_stats():
+    # This would normally come from your tracking system
+    # For now, returning mock data
+    return {
+        "zones": [
+            {
+                "zone_id": "Zone 1",
+                "location": "Main Intersection",
+                "total_vehicles": random.randint(50, 200),
+                "density_level": random.choice(["Low", "Medium", "High"]),
+                "last_update": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                "vehicle_breakdown": {
+                    "cars": random.randint(20, 100),
+                    "buses": random.randint(5, 20),
+                    "trucks": random.randint(10, 30),
+                    "two_wheelers": random.randint(15, 50)
+                },
+                "average_speed": random.randint(30, 80)
+            },
+            {
+                "zone_id": "Zone 2",
+                "location": "Highway Entry",
+                "total_vehicles": random.randint(50, 200),
+                "density_level": random.choice(["Low", "Medium", "High"]),
+                "last_update": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                "vehicle_breakdown": {
+                    "cars": random.randint(20, 100),
+                    "buses": random.randint(5, 20),
+                    "trucks": random.randint(10, 30),
+                    "two_wheelers": random.randint(15, 50)
+                },
+                "average_speed": random.randint(30, 80)
+            }
+        ]
+    }
+
+@app.get("/api/alerts")
+def get_alerts():
+    # Mock data for alerts
+    return {
+        "overspeeding": [
+            {
+                "vehicle_id": f"V{random.randint(1000, 9999)}",
+                "speed": random.randint(80, 120),
+                "zone": f"Zone {random.randint(1, 3)}",
+                "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            } for _ in range(3)
+        ],
+        "stopped_vehicles": [
+            {
+                "vehicle_id": f"V{random.randint(1000, 9999)}",
+                "duration": f"{random.randint(1, 10)} minutes",
+                "zone": f"Zone {random.randint(1, 3)}"
+            } for _ in range(2)
+        ],
+        "proximity_alerts": [
+            {
+                "vehicle1": f"V{random.randint(1000, 9999)}",
+                "vehicle2": f"V{random.randint(1000, 9999)}",
+                "distance": f"{random.randint(1, 5)} meters",
+                "zone": f"Zone {random.randint(1, 3)}"
+            } for _ in range(2)
+        ],
+        "accidents": [
+            {
+                "zone": f"Zone {random.randint(1, 3)}",
+                "vehicles": [f"V{random.randint(1000, 9999)}" for _ in range(2)],
+                "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            } for _ in range(1)
+        ]
+    }
+
+@app.get("/api/accident-detection")
+def get_accident_detection():
+    # Mock data for accident detection
+    return {
+        "accidents": [
+            {
+                "snapshot_url": "/static/accident_snapshot.jpg",  # This would be a real image in production
+                "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                "zone": f"Zone {random.randint(1, 3)}",
+                "confidence_score": round(random.uniform(0.7, 0.95), 2),
+                "prediction": "Accident",
+                "confidence_level": f"{random.randint(70, 95)}%"
+            } for _ in range(1)
+        ]
+    }
+
+@app.get("/api/analytics")
+def get_analytics():
+    # Mock data for analytics
+    return {
+        "vehicle_count_over_time": {
+            "labels": [f"{i}:00" for i in range(24)],
+            "data": [random.randint(50, 200) for _ in range(24)]
+        },
+        "speed_distribution": {
+            "ranges": ["0-20", "21-40", "41-60", "61-80", "81-100", "100+"],
+            "counts": [random.randint(10, 50) for _ in range(6)]
+        },
+        "vehicle_type_distribution": {
+            "labels": ["Cars", "Buses", "Trucks", "Two-wheelers"],
+            "data": [
+                [random.randint(20, 100) for _ in range(24)],
+                [random.randint(5, 20) for _ in range(24)],
+                [random.randint(10, 30) for _ in range(24)],
+                [random.randint(15, 50) for _ in range(24)]
+            ]
+        },
+        "zone_congestion": {
+            "zones": ["Zone 1", "Zone 2", "Zone 3"],
+            "congestion_levels": [random.randint(1, 100) for _ in range(3)]
+        },
+        "average_delay": {
+            "labels": [f"{i}:00" for i in range(24)],
+            "data": [random.randint(0, 30) for _ in range(24)]
+        }
+    }
 
