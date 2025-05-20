@@ -3,17 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Stream with Logs - RoadSense</title>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-    />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../static/landing.css" />
-    <link rel="stylesheet" href="../static/tracking.css" />
+    <title>Road Sense - Live Tracking</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/tracking.css">
+    <link rel="stylesheet" href="/static/landing.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
   <body>
-    <!-- Navigation --> 
+    <!-- Navigation -->
     <nav class="navbar">
       <div class="nav-brand">
         <img src="../static/assets/logo.png" alt="logo" class="website-logo">
@@ -25,23 +23,17 @@
     </nav>
 
     <div class="container">
-      <!-- Left Panel Toggle -->
-      <div class="panel-toggle left-toggle" onclick="togglePanel('left')">
-        <i class="fas fa-chevron-right"></i>
-        <span>All Cars Logs</span>
-      </div>
-
-      <!-- Left Panel -->
-      <div class="left-panel" id="left-panel">
+      <!-- Left Panel - Traffic Stats -->
+      <div id="left-panel" class="left-panel">
         <div class="panel-heading">
-          <span><i class="fas fa-car"></i> All Cars Logs</span>
+          <span><i class="fas fa-chart-line"></i> Traffic Panel</span>
         </div>
-        <div class="panel-content" id="log-container">
-          <!-- Logs will load here -->
+        <div class="panel-content">
+          <!-- Traffic stats will be populated by JavaScript -->
         </div>
       </div>
 
-      <!-- Center Panel -->
+      <!-- Center Panel - Video Feed -->
       <div class="center-panel">
         <div class="video-container">
           <img src="/video" alt="Live Stream" />
@@ -52,23 +44,60 @@
         </div>
       </div>
 
-      <!-- Right Panel Toggle -->
-      <div class="panel-toggle right-toggle" onclick="togglePanel('right')">
-        <i class="fas fa-chevron-left"></i>
-        <span>Accident Data</span>
+      <!-- Right Panel - Alerts -->
+      <div id="right-panel" class="right-panel">
+        <div class="panel-heading">
+          <span><i class="fas fa-bell"></i> Alert Panel</span>
+        </div>
+        <div class="panel-content">
+          <!-- Alerts will be populated by JavaScript -->
+        </div>
       </div>
 
-      <!-- Right Panel -->
-      <div class="right-panel" id="right-panel">
-        <div class="panel-heading">
-          <span><i class="fas fa-exclamation-triangle"></i> Accident Data</span>
-        </div>
-        <div class="panel-content" id="accident-container">
-          <!-- Accident logs will load here -->
-        </div>
+      <!-- Panel Toggle Buttons -->
+      <div class="panel-toggle left-toggle">
+        <i class="fas fa-chevron-right"></i>
+        <span>Traffic Panel</span>
+      </div>
+      <div class="panel-toggle right-toggle">
+        <i class="fas fa-chevron-left"></i>
+        <span>Alert Panel</span>
+      </div>
+
+      <!-- Accident Detection Panel -->
+      <div id="accident-panel">
+        <!-- Accident detection content will be populated by JavaScript -->
+      </div>
+
+      <!-- Analytics Panel -->
+      <div id="analytics-panel">
+        <!-- Analytics charts will be populated by JavaScript -->
       </div>
     </div>
 
-    <script src="../static/script.js"></script>
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h4>Contact Us</h4>
+          <p><i class="fas fa-envelope"></i> info@roadsense.com</p>
+          <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+        </div>
+        <div class="footer-section">
+          <h4>Follow Us</h4>
+          <div class="social-links">
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-linkedin"></i></a>
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 RoadSense. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <script src="/static/tracking.js"></script>
   </body>
 </html>
