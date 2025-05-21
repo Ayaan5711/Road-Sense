@@ -1,7 +1,6 @@
 import webbrowser
 import uvicorn
 import threading
-import time
 import cv2
 import time
 import numpy as np
@@ -45,6 +44,7 @@ x1 = [-160, -25, 971]; y1 = [405, 710, 671]
 x2 = [112, 568, 1480]; y2 = [503, 710, 671]
 x3 = [557, 706, 874];  y3 = [195, 212, 212]
 x4 = [411, 569, 749];  y4 = [195, 212, 212]
+
 SOURCES, TARGETS, zone_annotators, box_annotators, trace_annotators, line_zones, \
     line_zone_annotators, label_annotators, lines_start, lines_end, zones, \
     x1, y1, x2, y2, x3, y3, x4, y4 = create_zones(x1, y1, x2, y2, x3, y3, x4, y4, coef, video_info, colors)
@@ -53,6 +53,7 @@ byte_tracker, fps_monitor = initialize_tracking(video_info)
 view_transformers = [ViewTransformer(s, t) for s, t in zip(SOURCES, TARGETS)]
 selected_classes = [2, 3, 5, 7]
 coordinates = [defaultdict(lambda: deque(maxlen=30)) for _ in range(3)]
+
 fps = video_info.fps
 
 
@@ -131,7 +132,7 @@ def home(request: Request):
         txt_data = f.readlines()
     return templates.TemplateResponse("tracking.html", {"request": request, "txt_data": txt_data})
 
-    
+
 @app.get("/video")
 def video_feed():
     try:
@@ -142,6 +143,7 @@ def video_feed():
     except Exception as e:
         print(f"Error in video feed: {str(e)}")
         return {"error": "Video feed error"}, 500
+
 
 @app.get("/log")
 def get_log_data():
@@ -162,6 +164,7 @@ def get_accident_data():
         return {"lines": lines[::-1]}
     except FileNotFoundError:
         return {"lines": ["No accident data available."]}
+
 
 @app.get("/api/traffic-stats")
 def get_traffic_stats():
@@ -200,6 +203,7 @@ def get_traffic_stats():
         ]
     }
 
+
 @app.get("/api/alerts")
 def get_alerts():
     # Mock data for alerts
@@ -236,6 +240,7 @@ def get_alerts():
         ]
     }
 
+
 @app.get("/api/accident-detection")
 def get_accident_detection():
     # Mock data for accident detection
@@ -251,6 +256,7 @@ def get_accident_detection():
             } for _ in range(1)
         ]
     }
+
 
 @app.get("/api/analytics")
 def get_analytics():
