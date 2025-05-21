@@ -76,17 +76,20 @@ Place your models in the `models/` directory:
 
 ## 🧪 Running the Application
 
-### A. Run the FastAPI Server
-
+### A. Run the FastAPI Server with Auto-Browser Launch
+```bash
+python app.py
+```
+Your default browser will automatically open to:
+```bash
+http://127.0.0.1:8000/
+```
+### B. Manual Run (if auto-launch is not used)
 ```bash
 uvicorn app:app --reload
 ```
-
-### B. Access the Live Stream
-
-Open your browser and navigate to:
-
-```
+Then open your browser and go to:
+``` bash
 http://127.0.0.1:8000/
 ```
 
