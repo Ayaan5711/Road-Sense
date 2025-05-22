@@ -23,6 +23,19 @@ import random
 from typing import List, Dict
 import json
 from threading import Lock
+import logging
+
+# === Logging Configuration ===
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    handlers=[
+        logging.StreamHandler(),  # Logs to terminal
+        logging.FileHandler("roadsense.log", mode='a')  # Logs to a file
+    ]
+)
+logger = logging.getLogger(__name__)
+
 
 # Shared live data structure to be updated in real-time
 
@@ -84,7 +97,7 @@ fps = video_info.fps
 def generate_frames():
     cap = cv2.VideoCapture(VIDEO)
     if not cap.isOpened():
-        print("Error: Could not open video source")
+        logger.error("Could not open video source.")
         return
 
     while True:
@@ -92,10 +105,11 @@ def generate_frames():
             start_time = time.time()
             ret, frame = cap.read()
             if not ret:
-                print("Error: Could not read frame")
+                logger.error("Could not read frame from video.")
                 break
 
-            # Process frame and get both the visual and data outputs
+            logger.debug("Frame read successfully.")
+
             processed_frame, frame_data = process_frame(
                 frame=frame,
                 fps=int(fps),
@@ -119,17 +133,21 @@ def generate_frames():
                 zones=zones
             )
 
-            # ✅ Update the live_data dictionary
+            logger.debug(f"Frame processed. Extracted data: {frame_data}")
+
+            # ✅ Update the global shared dictionary
             with live_data_lock:
                 live_data["traffic_stats"] = frame_data.get("traffic_stats", [])
                 live_data["alerts"] = frame_data.get("alerts", {})
                 live_data["accident_detection"] = frame_data.get("accident_detection", [])
                 live_data["analytics"] = frame_data.get("analytics", {})
 
-            # Encode the processed frame for video stream
+            logger.debug(f"Updated live_data: {live_data}")
+
+            # Encode frame for streaming
             ret, buffer = cv2.imencode('.jpg', processed_frame)
             if not ret:
-                print("Error: Could not encode frame")
+                logger.error("Failed to encode frame.")
                 continue
 
             frame_bytes = buffer.tobytes()
@@ -139,10 +157,11 @@ def generate_frames():
             time.sleep(max(1 / 25 - (time.time() - start_time), 0))
 
         except Exception as e:
-            print(f"Error in frame generation: {str(e)}")
+            logger.exception(f"Exception in generate_frames: {e}")
             continue
 
     cap.release()
+
 
 
 
@@ -202,7 +221,7 @@ def get_accident_data():
 def get_traffic_stats():
     with live_data_lock:
         data = live_data.get("traffic_stats", [])
-
+        logger.debug(f"/api/traffic-stats response: {data}")
     if data:
         return {"zones": data}
 
@@ -245,6 +264,7 @@ def get_traffic_stats():
 def get_alerts():
     with live_data_lock:
         alerts = live_data.get("alerts", {})
+        logger.debug(f"/api/alerts response: {alerts}")
 
     if alerts:
         return alerts
@@ -303,6 +323,7 @@ def get_accident_detection():
 def get_analytics():
     with live_data_lock:
         analytics = live_data.get("analytics", {})
+        logger.debug(f"/api/analytics response: {analytics}")
 
     if analytics:
         return analytics
@@ -343,6 +364,11 @@ def open_browser():
     time.sleep(1)
     webbrowser.open("http://127.0.0.1:8000")
 
+def start_processing_loop():
+    for _ in generate_frames():
+        pass  # Just iterate to keep processing frames
+
 if __name__ == "__main__":
+    threading.Thread(target=start_processing_loop, daemon=True).start()
     threading.Thread(target=open_browser).start()
     uvicorn.run("app:app", host="127.0.0.1", port=8000, reload=True)
