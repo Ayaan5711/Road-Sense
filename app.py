@@ -17,10 +17,48 @@ from fastapi import FastAPI, Request
 from fastapi.responses import StreamingResponse, HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
+from fastapi import HTTPException
 from datetime import datetime
 import random
 from typing import List, Dict
 import json
+from threading import Lock
+import logging
+
+# === Logging Configuration ===
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    handlers=[
+        #logging.StreamHandler(),  # Logs to terminal
+        logging.FileHandler("roadsense.log", mode='a')  # Logs to a file
+    ]
+)
+logger = logging.getLogger(__name__)
+
+
+# Shared live data structure to be updated in real-time
+
+live_data = {
+    "traffic_stats": [],
+    "alerts": {
+        "overspeeding": [],
+        "stopped_vehicles": [],
+        "proximity_alerts": [],
+        "accidents": []
+    },
+    "accident_detection": [],
+    "analytics": {
+        "vehicle_count_over_time": {"labels": [], "data": []},
+        "speed_distribution": {"ranges": [], "counts": []},
+        "vehicle_type_distribution": {"labels": [], "data": []},
+        "zone_congestion": {"zones": [], "congestion_levels": []},
+        "average_delay": {"labels": [], "data": []}
+    }
+}
+
+# Lock for thread-safe updates
+live_data_lock = Lock()
 
 
 app = FastAPI()
@@ -56,11 +94,10 @@ coordinates = [defaultdict(lambda: deque(maxlen=30)) for _ in range(3)]
 
 fps = video_info.fps
 
-
 def generate_frames():
     cap = cv2.VideoCapture(VIDEO)
     if not cap.isOpened():
-        print("Error: Could not open video source")
+        logger.error("Could not open video source.")
         return
 
     while True:
@@ -68,10 +105,12 @@ def generate_frames():
             start_time = time.time()
             ret, frame = cap.read()
             if not ret:
-                print("Error: Could not read frame")
+                logger.error("Could not read frame from video.")
                 break
 
-            processed = process_frame(
+            logger.debug("Frame read successfully.")
+
+            processed_frame, frame_data = process_frame(
                 frame=frame,
                 fps=int(fps),
                 colors=colors,
@@ -94,23 +133,35 @@ def generate_frames():
                 zones=zones
             )
 
-            ret, buffer = cv2.imencode('.jpg', processed)
+            logger.debug(f"Frame processed. Extracted data: {frame_data}")
+
+            # ✅ Update the global shared dictionary
+            with live_data_lock:
+                live_data["traffic_stats"] = frame_data.get("traffic_stats", [])
+                live_data["alerts"] = frame_data.get("alerts", {})
+                live_data["accident_detection"] = frame_data.get("accident_detection", [])
+                live_data["analytics"] = frame_data.get("analytics", {})
+
+            logger.debug(f"Updated live_data: {live_data}")
+
+            # Encode frame for streaming
+            ret, buffer = cv2.imencode('.jpg', processed_frame)
             if not ret:
-                print("Error: Could not encode frame")
+                logger.error("Failed to encode frame.")
                 continue
 
-            frame = buffer.tobytes()
+            frame_bytes = buffer.tobytes()
             yield (b'--frame\r\n'
-                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+                   b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
 
-            # Control frame rate
-            time.sleep(max(1/25 - (time.time() - start_time), 0))
+            time.sleep(max(1 / 25 - (time.time() - start_time), 0))
 
         except Exception as e:
-            print(f"Error in frame generation: {str(e)}")
+            logger.exception(f"Exception in generate_frames: {e}")
             continue
 
     cap.release()
+
 
 
 
@@ -168,8 +219,13 @@ def get_accident_data():
 
 @app.get("/api/traffic-stats")
 def get_traffic_stats():
-    # This would normally come from your tracking system
-    # For now, returning mock data
+    with live_data_lock:
+        data = live_data.get("traffic_stats", [])
+        logger.debug(f"/api/traffic-stats response: {data}")
+    if data:
+        return {"zones": data}
+
+    # Fallback  data
     return {
         "zones": [
             {
@@ -206,7 +262,14 @@ def get_traffic_stats():
 
 @app.get("/api/alerts")
 def get_alerts():
-    # Mock data for alerts
+    with live_data_lock:
+        alerts = live_data.get("alerts", {})
+        logger.debug(f"/api/alerts response: {alerts}")
+
+    # if alerts:
+    #     return alerts
+
+    # Fallback  alerts
     return {
         "overspeeding": [
             {
@@ -236,10 +299,9 @@ def get_alerts():
                 "zone": f"Zone {random.randint(1, 3)}",
                 "vehicles": [f"V{random.randint(1000, 9999)}" for _ in range(2)],
                 "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            } for _ in range(1)
+            }
         ]
     }
-
 
 @app.get("/api/accident-detection")
 def get_accident_detection():
@@ -257,10 +319,16 @@ def get_accident_detection():
         ]
     }
 
-
 @app.get("/api/analytics")
 def get_analytics():
-    # Mock data for analytics
+    with live_data_lock:
+        analytics = live_data.get("analytics", {})
+        logger.debug(f"/api/analytics response: {analytics}")
+
+    # if analytics:
+    #     return analytics
+
+    # Fallback  analytics
     return {
         "vehicle_count_over_time": {
             "labels": [f"{i}:00" for i in range(24)],
@@ -291,10 +359,16 @@ def get_analytics():
 
 
 
+
 def open_browser():
     time.sleep(1)
     webbrowser.open("http://127.0.0.1:8000")
 
+def start_processing_loop():
+    for _ in generate_frames():
+        pass  # Just iterate to keep processing frames
+
 if __name__ == "__main__":
+    threading.Thread(target=start_processing_loop, daemon=True).start()
     threading.Thread(target=open_browser).start()
     uvicorn.run("app:app", host="127.0.0.1", port=8000, reload=True)
