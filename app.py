@@ -30,7 +30,7 @@ logging.basicConfig(
     level=logging.DEBUG,
     format="%(asctime)s [%(levelname)s] %(message)s",
     handlers=[
-        logging.StreamHandler(),  # Logs to terminal
+        #logging.StreamHandler(),  # Logs to terminal
         logging.FileHandler("roadsense.log", mode='a')  # Logs to a file
     ]
 )
@@ -266,8 +266,8 @@ def get_alerts():
         alerts = live_data.get("alerts", {})
         logger.debug(f"/api/alerts response: {alerts}")
 
-    if alerts:
-        return alerts
+    # if alerts:
+    #     return alerts
 
     # Fallback  alerts
     return {
@@ -325,8 +325,8 @@ def get_analytics():
         analytics = live_data.get("analytics", {})
         logger.debug(f"/api/analytics response: {analytics}")
 
-    if analytics:
-        return analytics
+    # if analytics:
+    #     return analytics
 
     # Fallback  analytics
     return {
