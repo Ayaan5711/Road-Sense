@@ -306,15 +306,10 @@ def get_alerts():
 @app.get("/api/accident-detection")
 def get_accident_detection():
     # Mock data for accident detection
-    with live_data_lock:
-        accidents = live_data.get("accident_detection", [])
-        logger.debug(f"/api/accident-detection response: {accidents}")
-    if accidents:
-        return {"accidents": accidents}
     return {
         "accidents": [
             {
-                "snapshot_url": "\static\accidents\accident_snapshot_20250525_220022_920327.jpg",  # This would be a real image in production
+                "snapshot_url": "/static/accidents/accident_snapshot_20250525_220022_920327.jpg",  # This would be a real image in production
                 "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                 "zone": f"Zone {random.randint(1, 3)}",
                 "confidence_score": round(random.uniform(0.7, 0.95), 2),
