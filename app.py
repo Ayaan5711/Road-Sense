@@ -309,7 +309,7 @@ def get_accident_detection():
     return {
         "accidents": [
             {
-                "snapshot_url": "/static/accidents/accident_snapshot_20250525_220022_920327.jpg",  # This would be a real image in production
+                "snapshot_url": "/static/accident_snapshot.jpg",  # This would be a real image in production
                 "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                 "zone": f"Zone {random.randint(1, 3)}",
                 "confidence_score": round(random.uniform(0.7, 0.95), 2),
