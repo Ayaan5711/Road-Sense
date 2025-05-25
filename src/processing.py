@@ -1,6 +1,9 @@
 import numpy as np
 import supervision as sv
 import cv2
+import os
+import datetime
+import glob
 
 def process_frame(frame: np.ndarray, fps, colors, coordinates, view_transformers, byte_tracker, selected_classes,
                   vehicle_model, accident_model, SOURCES, TARGETS, zone_annotators, box_annotators,
@@ -100,22 +103,82 @@ def process_frame(frame: np.ndarray, fps, colors, coordinates, view_transformers
         line_zone.trigger(detections=detections_filtered)
 
     # Draw accident detections (red box)
+    last_accident_time = {}
     accident_detection_results = []
+    current_time = time.time()
     for accident_det in accident_detections:
         x1, y1, x2, y2 = map(int, accident_det[0][0:4])
-        confidence = f"{float(accident_det[2]):.2f}"
-        confidence = float(confidence)
-        if confidence > 0.70:
-            label = f"Accident {confidence}"
-            cv2.rectangle(annotated_frame, (x1, y1), (x2, y2), (0, 0, 255), 2)
-            cv2.putText(annotated_frame, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
-            with open('accident-log.txt', 'a') as accident_log:
-                accident_log.write(f"Accident Detected - Coordinates: ({x1}, {y1}), ({x2}, {y2}), Confidence: {confidence:.2f}\n")
-            accident_detection_results.append({
-                "bbox": [x1, y1, x2, y2],
-                "confidence": confidence,
-                "label": "Accident"
-            })
+        confidence = float(accident_det[2])
+        # print(confidence)
+        if confidence > 0.7:
+            bbox_key = (x1 // 10, y1 // 10, x2 // 10, y2 // 10)  # reduce precision for tolerance
+            last_time = last_accident_time.get(bbox_key, 0)
+
+            if current_time - last_time >= 30:
+                last_accident_time[bbox_key] = current_time
+
+                label = f"Accident {confidence:.2f}"
+                cv2.rectangle(annotated_frame, (x1, y1), (x2, y2), (0, 0, 255), 2)
+                cv2.putText(annotated_frame, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
+
+                snapshot_folder = "static\accidents"
+                os.makedirs(snapshot_folder, exist_ok=True)
+                timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S_%f")
+                snapshot_filename = f"accident_snapshot_{timestamp}.jpg"
+                snapshot_url = os.path.join(snapshot_folder, snapshot_filename)
+
+                margin = 50
+                y1_crop = max(0, y1 - margin)
+                y2_crop = min(frame.shape[0], y2 + margin)
+                x1_crop = max(0, x1 - margin)
+                x2_crop = min(frame.shape[1], x2 + margin)
+                cropped_accident = annotated_frame[y1_crop:y2_crop, x1_crop:x2_crop]
+                cv2.imwrite(snapshot_url, cropped_accident)
+
+                with open('accident-log.txt', 'a') as accident_log:
+                    accident_log.write(f"Accident Detected - Coordinates: ({x1}, {y1}), ({x2}, {y2}), Confidence: {confidence:.2f}, Snapshot: {snapshot_url}\n")
+
+                # Compute center of accident bounding box
+                accident_center = np.array([(x1 + x2) // 2, (y1 + y2) // 2])
+
+                # Identify the zone in which the accident occurred
+                accident_zone_index = None
+                for i, zone in enumerate(zones):
+                    if zone.polygon.contains_point(accident_center):  # using Supervision polygon zone method
+                        accident_zone_index = i
+                        break
+
+                accident_zone_label = f"Zone {accident_zone_index + 1}" if accident_zone_index is not None else "Unknown"
+                
+                
+
+                def get_latest_image(folder_path, image_extensions=('*.jpg', '*.jpeg', '*.png', '*.bmp')):
+                    # Collect all image files
+                    image_files = []
+                    for ext in image_extensions:
+                        image_files.extend(glob.glob(os.path.join(folder_path, ext)))
+
+                    if not image_files:
+                        return None  # No image found
+
+                    # Sort by last modified time, descending
+                    latest_image = max(image_files, key=os.path.getmtime)
+                    return latest_image
+
+                
+                latest_image = get_latest_image(snapshot_folder)
+                print(f"Latest image: {latest_image}")
+
+
+                accident_detection_results.append({
+                    "bbox": [x1, y1, x2, y2],
+                    "confidence_level": f"{confidence*100}%",
+                    "prediction": "Accident",
+                    "confidence_score": confidence,
+                    "snapshot_url": latest_image,
+                    "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    "zone": accident_zone_label,
+                })
 
     total_car_count = sum(zone_car_counts)
     height, width, _ = annotated_frame.shape
