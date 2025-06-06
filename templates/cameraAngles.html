@@ -1,164 +1,171 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Camera Angles - RoadSense</title>
-    <link rel="stylesheet" href="../static/cameraAngles.css">
-    <link rel="stylesheet" href="../static/landing.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-</head>
-<body>
+    <link rel="stylesheet" href="../static/cameraAngles.css" />
+    <link rel="stylesheet" href="../static/landing.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
     <!-- Navigation -->
     <nav class="navbar">
-        <div class="nav-brand">
-            <img src="../static/assets/logo.png" alt="logo" class="website-logo">
-            <span>RoadSense</span>
-        </div>
-        <div class="nav-links">
-            <a href="#features">Features</a>
-            <a href="#about">About</a>
-            <a href="#contact">Contact</a>
-        </div>
+      <div class="nav-brand">
+        <img src="../static/assets/logo.png" alt="logo" class="website-logo" />
+        <span>RoadSense</span>
+      </div>
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </div>
     </nav>
 
     <!-- Main Content -->
     <div class="container">
-        <h1>Live Camera Monitoring</h1>
-        
-        <!-- Camera Grid -->
-        <div class="camera-grid">
-            <div class="camera-card">
-                <div class="camera-header">
-                    <h3>1 <i class="fas fa-video"></i> - Wide shot </h3>
-                    <div class="camera-controls">
-                        <a href="/live-streaming" class="control-btn"><i class="fas fa-expand"></i></a>
-                        
-                    </div>
-                </div>
-                <div class="camera-feed">
-                    <img src="../static/assets/ws.png" alt="Camera 1 Feed">
-                    <div class="status-indicator active">
-                        <span class="status-dot"></span>
-                        Live
-                    </div>
-                </div>
+      <h1>Live Camera Monitoring</h1>
+
+      <!-- Camera Grid -->
+      <div class="camera-grid">
+        <div class="camera-card">
+          <div class="camera-header">
+            <h3>1 <i class="fas fa-video"></i> - Wide shot</h3>
+            <div class="camera-controls">
+              <a href="/live-streaming" class="control-btn"
+                ><i class="fas fa-expand"></i
+              ></a>
             </div>
-
-            <div class="camera-card">
-                <div class="camera-header">
-                    <h3>2 <i class="fas fa-video"></i> - Medium shot</h3>
-                    <div class="camera-controls">
-                        <a href="/live-streaming" class="control-btn"><i class="fas fa-expand"></i></a>
-                        
-                    </div>
-                </div>
-                <div class="camera-feed">
-                    <img src="../static/assets/ms.png" alt="Camera 2 Feed">
-                    <div class="status-indicator active">
-                        <span class="status-dot"></span>
-                        Live
-                    </div>
-                </div>
+          </div>
+          <div class="camera-feed">
+            <img src="../static/assets/ws.png" alt="Camera 1 Feed" />
+            <div class="status-indicator active">
+              <span class="status-dot"></span>
+              Live
             </div>
-
-            <div class="camera-card">
-                <div class="camera-header">
-                    <h3>3 <i class="fas fa-video"></i> - Close-up shot</h3>
-                    <div class="camera-controls">
-                        <a href="/live-streaming" class="control-btn"><i class="fas fa-expand"></i></a>
-                        
-                    </div>
-                </div>
-                <div class="camera-feed">
-                    <img src="../static/assets/cu.png" alt="Camera 3 Feed">
-                    <div class="status-indicator active">
-                        <span class="status-dot"></span>
-                        Live
-                    </div>
-                </div>
-            </div>
-
-            
-
-            <div class="camera-card">
-                <div class="camera-header">
-                    <h3>4 <i class="fas fa-video"></i> - Dutch angle</h3>
-                    <div class="camera-controls">
-                        <a href="/live-streaming" class="control-btn"><i class="fas fa-expand"></i></a>
-                        
-                    </div>
-                </div>
-                <div class="camera-feed">
-                    <img src="../static/assets/dutch.png" alt="Camera 6 Feed">
-                    <div class="status-indicator active">
-                        <span class="status-dot"></span>
-                        Live
-                    </div>
-                </div>
-            </div>
-
-            <div class="camera-card">
-                <div class="camera-header">
-                    <h3>5 <i class="fas fa-video"></i> - High angle</h3>
-                    <div class="camera-controls">
-                        <a href="/live-streaming" class="control-btn"><i class="fas fa-expand"></i></a>
-                        
-                    </div>
-                </div>
-                <div class="camera-feed">
-                    <img src="../static/assets/high.png" alt="Camera 6 Feed">
-                    <div class="status-indicator active">
-                        <span class="status-dot"></span>
-                        Live
-                    </div>
-                </div>
-            </div>
-
-
-            <div class="camera-card">
-                <div class="camera-header">
-                    <h3>6 <i class="fas fa-video"></i> - Low angle</h3>
-                    <div class="camera-controls">
-                        <a href="/live-streaming" class="control-btn"><i class="fas fa-expand"></i></a>
-                        
-                    </div>
-                </div>
-                <div class="camera-feed">
-                    <img src="../static/assets/low.png" alt="Camera 6 Feed">
-                    <div class="status-indicator active">
-                        <span class="status-dot"></span>
-                        Live
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
+
+        <div class="camera-card">
+          <div class="camera-header">
+            <h3>2 <i class="fas fa-video"></i> - Medium shot</h3>
+            <div class="camera-controls">
+              <a href="/static-video" class="control-btn"
+                ><i class="fas fa-expand"></i
+              ></a>
+            </div>
+          </div>
+          <div class="camera-feed">
+            <img src="../static/assets/ms.png" alt="Camera 2 Feed" />
+            <div class="status-indicator active">
+              <span class="status-dot"></span>
+              Live
+            </div>
+          </div>
+        </div>
+
+        <div class="camera-card">
+          <div class="camera-header">
+            <h3>3 <i class="fas fa-video"></i> - Close-up shot</h3>
+            <div class="camera-controls">
+              <a href="/live-streaming" class="control-btn"
+                ><i class="fas fa-expand"></i
+              ></a>
+            </div>
+          </div>
+          <div class="camera-feed">
+            <img src="../static/assets/cu.png" alt="Camera 3 Feed" />
+            <div class="status-indicator active">
+              <span class="status-dot"></span>
+              Live
+            </div>
+          </div>
+        </div>
+
+        <div class="camera-card">
+          <div class="camera-header">
+            <h3>4 <i class="fas fa-video"></i> - Dutch angle</h3>
+            <div class="camera-controls">
+              <a href="/live-streaming" class="control-btn"
+                ><i class="fas fa-expand"></i
+              ></a>
+            </div>
+          </div>
+          <div class="camera-feed">
+            <img src="../static/assets/dutch.png" alt="Camera 6 Feed" />
+            <div class="status-indicator active">
+              <span class="status-dot"></span>
+              Live
+            </div>
+          </div>
+        </div>
+
+        <div class="camera-card">
+          <div class="camera-header">
+            <h3>5 <i class="fas fa-video"></i> - High angle</h3>
+            <div class="camera-controls">
+              <a href="/live-streaming" class="control-btn"
+                ><i class="fas fa-expand"></i
+              ></a>
+            </div>
+          </div>
+          <div class="camera-feed">
+            <img src="../static/assets/high.png" alt="Camera 6 Feed" />
+            <div class="status-indicator active">
+              <span class="status-dot"></span>
+              Live
+            </div>
+          </div>
+        </div>
+
+        <div class="camera-card">
+          <div class="camera-header">
+            <h3>6 <i class="fas fa-video"></i> - Low angle</h3>
+            <div class="camera-controls">
+              <a href="/live-streaming" class="control-btn"
+                ><i class="fas fa-expand"></i
+              ></a>
+            </div>
+          </div>
+          <div class="camera-feed">
+            <img src="../static/assets/low.png" alt="Camera 6 Feed" />
+            <div class="status-indicator active">
+              <span class="status-dot"></span>
+              Live
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Footer -->
     <footer class="footer">
-        <div class="footer-content">
-          <div class="footer-section">
-            <h4>Contact Us</h4>
-            <p><i class="fas fa-envelope"></i> ahmedayaan570@gmail.com </p>
-            <p><i class="fas fa-phone"></i> +91 8777082393</p>
-          </div>
-          <div class="footer-section">
-            <h4>Follow Us</h4>
-            <div class="social-links">
-              <a href="#"><i class="fab fa-twitter"></i></a>
-              <a href="#"><i class="fab fa-linkedin"></i></a>
-              <a href="#"><i class="fab fa-facebook"></i></a>
-              <a href="#"><i class="fab fa-instagram"></i></a>
-            </div>
+      <div class="footer-content">
+        <div class="footer-section">
+          <h4>Contact Us</h4>
+          <p><i class="fas fa-envelope"></i> ahmedayaan570@gmail.com</p>
+          <p><i class="fas fa-phone"></i> +91 8777082393</p>
+        </div>
+        <div class="footer-section">
+          <h4>Follow Us</h4>
+          <div class="social-links">
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-linkedin"></i></a>
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
           </div>
         </div>
-        <div class="footer-bottom">
-          <p>&copy; 2024 RoadSense. All rights reserved.</p>
-        </div>
-      </footer>
-</body>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 RoadSense. All rights reserved.</p>
+      </div>
+    </footer>
+  </body>
 </html>
-
-   

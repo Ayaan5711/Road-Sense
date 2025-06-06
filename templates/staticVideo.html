@@ -29,47 +29,58 @@
     </nav>
 
     <div class="container">
-      <div class="layout-panel-wrapper">
-        <!-- Left Panel - Traffic Stats -->
-        <div id="left-panel" class="left-panel">
-          <div class="panel-heading">
-            <span><i class="fas fa-chart-line"></i> Traffic Panel</span>
-          </div>
-          <div class="panel-content">
-            <!-- Traffic stats will be populated by JavaScript -->
-          </div>
+      <!-- Left Panel - Traffic Stats -->
+      <div id="left-panel" class="left-panel">
+        <div class="panel-heading">
+          <span><i class="fas fa-chart-line"></i> Traffic Panel</span>
         </div>
+        <div class="panel-content">
+          <!-- Traffic stats will be populated by JavaScript -->
+        </div>
+      </div>
 
-        <!-- Center Panel - Video Feed -->
-        <div class="center-panel">
-          <div class="video-container">
-            <img src="/video" alt="Live Stream" />
-            <div class="status-indicator active">
-              <span class="status-dot"></span>
-              Live Stream
-            </div>
-          </div>
+      <!-- Center Panel - Video Feed -->
+      <div class="center-panel">
+        <div
+          class="video-container"
+          style="display: flex; justify-content: center"
+        >
+          <video
+            autoplay
+            muted
+            loop
+            playsinline
+            style="
+              width: 80%;
+              height: auto;
+              border-radius: 10px;
+              margin-bottom: 10px;
+            "
+          >
+            >
+            <source src="/static/assets/video3.mp4" type="video/mp4" />
+          </video>
         </div>
+      </div>
 
-        <!-- Right Panel - Alerts -->
-        <div id="right-panel" class="right-panel">
-          <div class="panel-heading">
-            <span><i class="fas fa-bell"></i> Alert Panel</span>
-          </div>
-          <div class="panel-content">
-            <!-- Alerts will be populated by JavaScript -->
-          </div>
+      <!-- Right Panel - Alerts -->
+      <div id="right-panel" class="right-panel">
+        <div class="panel-heading">
+          <span><i class="fas fa-bell"></i> Alert Panel</span>
         </div>
+        <div class="panel-content">
+          <!-- Alerts will be populated by JavaScript -->
+        </div>
+      </div>
 
-        <!-- Panel Toggle Buttons -->
-        <div class="panel-toggle left-toggle">
-          <i class="fas fa-chevron-right"></i>
-          <span>Traffic Panel</span>
-        </div>
-        <div class="panel-toggle right-toggle">
-          <i class="fas fa-chevron-left"></i>
-          <span>Alert Panel</span>
-        </div>
+      <!-- Panel Toggle Buttons -->
+      <div class="panel-toggle left-toggle">
+        <i class="fas fa-chevron-right"></i>
+        <span>Traffic Panel</span>
+      </div>
+      <div class="panel-toggle right-toggle">
+        <i class="fas fa-chevron-left"></i>
+        <span>Alert Panel</span>
       </div>
       <!-- Accident Detection Panel -->
       <div id="accident-panel">

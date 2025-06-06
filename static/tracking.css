@@ -8,7 +8,8 @@
   --success-color: #10b981;
 }
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   height: 100%;
@@ -16,11 +17,10 @@ html, body {
 }
 
 body {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   background-color: #f3f4f6;
   color: var(--text-color);
 }
-
 
 .container {
   display: flex;
@@ -46,7 +46,6 @@ body {
   backdrop-filter: blur(10px);
   font-weight: 500;
 }
-
 
 .panel-toggle:hover {
   background-color: var(--primary-color);
@@ -92,7 +91,8 @@ body {
   height: calc(100vh - 70px);
   width: 450px;
   background: #ffffff;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
   transition: transform 0.3s ease;
   z-index: 90;
   border-radius: 0 8px 8px 0;
@@ -152,7 +152,8 @@ body {
   flex-direction: column;
 }
 
-.center-panel {
+.center-panel,
+.center-panel2 {
   flex: 1;
   background: #000;
   display: flex;
@@ -164,7 +165,8 @@ body {
   position: relative;
 }
 
-.video-container {
+.video-container,
+.video-container2 {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -178,7 +180,6 @@ body {
   height: 90%;
   object-fit: cover;
   border-radius: 10px;
-
 }
 
 .status-indicator {
@@ -242,281 +243,300 @@ body {
 
 /* New Panel Styles */
 #accident-panel {
-    width: calc(100% - 100px);
-    padding: 2rem;
-    background: #ffffff;
-    margin: 1rem 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: calc(100% - 100px);
+  padding: 2rem;
+  background: #ffffff;
+  margin: 1rem 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.layout-panel-wrapper {
+  display: grid;
+  grid-template-columns: 250px 1fr 250px; /* Adjust based on left/right panel width */
+  gap: 1rem;
+  padding: 1rem 2rem;
 }
 
 /* Traffic Panel Styles */
 .zone-card {
-    background: white;
-    border-radius: 8px;
-    padding: 1.5rem;
-    margin-bottom: 1rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .zone-stats {
-    margin: 1rem 0;
+  margin: 1rem 0;
 }
 
 .density-low {
-    color: #10b981;
-    font-weight: 600;
+  color: #10b981;
+  font-weight: 600;
 }
 
 .density-medium {
-    color: #f59e0b;
-    font-weight: 600;
+  color: #f59e0b;
+  font-weight: 600;
 }
 
 .density-high {
-    color: #ef4444;
-    font-weight: 600;
+  color: #ef4444;
+  font-weight: 600;
 }
 
 .breakdown-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.5rem;
-    margin-top: 0.5rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+  margin-top: 0.5rem;
 }
 
 /* Alert Panel Styles */
 .alert-section {
-    margin-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .alert-item {
-    background: white;
-    padding: 1rem;
-    border-radius: 6px;
-    margin-bottom: 0.5rem;
-    border-left: 4px solid #3b82f6;
+  background: white;
+  padding: 1rem;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+  border-left: 4px solid #3b82f6;
 }
 
 .alert-item.accident {
-    border-left-color: #ef4444;
+  border-left-color: #ef4444;
 }
 
 .alert-item small {
-    color: #6b7280;
-    font-size: 0.875rem;
+  color: #6b7280;
+  font-size: 0.875rem;
 }
 
 /* Accident Detection Panel Styles */
+
+#accident-panel {
+  width: calc(100% - 100px);
+  padding: 2rem;
+  background: #ffffff;
+  margin: 1rem 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
 .accident-detection-card {
-    background: white;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .accident-header {
-    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-    color: white;
-    padding: 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .confidence-badge {
-    background: rgba(255, 255, 255, 0.2);
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.875rem;
-    backdrop-filter: blur(5px);
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  backdrop-filter: blur(5px);
 }
 
 .accident-content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-    padding: 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  padding: 1.5rem;
 }
 
 .accident-image {
-    width: 100%;
-    height: 300px;
-    background: #f3f4f6;
-    border-radius: 8px;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  width: 100%;
+  height: 300px;
+  background: #f3f4f6;
+  border-radius: 8px;
+  overflow: hidden;
+
+  justify-content: center;
+  align-items: center;
 }
 
 .accident-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .accident-detection-card .accident-image .no-snapshot {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: #000000;
-    text-align: center;
-    padding: 2rem;
-    width: 100%;
-    height: 100%;
-    background: #f3f4f6;
-    z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #000000;
+  text-align: center;
+  padding: 2rem;
+  width: 100%;
+  height: 100%;
+  background: #f3f4f6;
 }
 
 .accident-detection-card .accident-image .no-snapshot i {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    color: #9ca3af;
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: #9ca3af;
 }
 
 .accident-detection-card .accident-image .no-snapshot p {
-    font-size: 1.1rem;
-    font-weight: 500;
-    margin: 0;
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin: 0;
 }
 
 .accident-details {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .accident-actions {
-    display: flex;
-    gap: 1rem;
-    margin-top: auto;
+  display: flex;
+  gap: 1rem;
+  margin-top: auto;
 }
 
 .replay-btn,
 .dispatch-btn {
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 6px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .replay-btn {
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-    color: white;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
 }
 
 .dispatch-btn {
-    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-    color: white;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
 }
 
 .replay-btn:hover,
 .dispatch-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* Analytics Panel Styles */
 #analytics-panel {
-    width: calc(100% - 100px);
-    padding: 2rem;
-    background: #ffffff;
-    margin: 1rem 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 2rem;
+  width: calc(100% - 100px);
+  padding: 2rem;
+  background: #ffffff;
+  margin: 1rem 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
 }
 
 .chart-container {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease;
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
 }
 
 .chart-container:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .chart-title {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: var(--text-color);
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid #e5e7eb;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-color);
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e5e7eb;
 }
 
 /* Chart-specific styles */
 .vehicle-count-chart {
-    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
 }
 
 .speed-distribution-chart {
-    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
 }
 
 .vehicle-type-chart {
-    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
 }
 
 .congestion-chart {
-    background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
 }
 
 /* Responsive Design */
 @media (max-width: 1200px) {
-    #analytics-panel {
-        grid-template-columns: 1fr;
-    }
-    
-    .accident-content {
-        grid-template-columns: 1fr;
-    }
+  #analytics-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .accident-content {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 768px) {
-    #accident-panel,
-    #analytics-panel {
-        width: calc(100% - 20px);
-        margin: 1rem 10px;
-        padding: 1rem;
-    }
-    
-    .accident-actions {
-        flex-direction: column;
-    }
-    
-    .chart-container {
-        padding: 1rem;
-    }
+  #accident-panel,
+  #analytics-panel {
+    width: calc(100% - 20px);
+    margin: 1rem 10px;
+    padding: 1rem;
+  }
+
+  .accident-actions {
+    flex-direction: column;
+  }
+
+  .chart-container {
+    padding: 1rem;
+  }
 }
 
 .no-snapshot {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: #000000;
-    text-align: center;
-    padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #000000;
+  text-align: center;
+  padding: 2rem;
 }
 
 .no-snapshot i {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    color: #9ca3af;
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: #9ca3af;
 }
 
 .no-snapshot p {
-    font-size: 1.1rem;
-    font-weight: 500;
+  font-size: 1.1rem;
+  font-weight: 500;
 }

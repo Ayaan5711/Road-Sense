@@ -184,6 +184,11 @@ def home(request: Request):
     return templates.TemplateResponse("tracking.html", {"request": request, "txt_data": txt_data})
 
 
+@app.get("/static-video", response_class=HTMLResponse)
+def static_video_page(request: Request):
+    return templates.TemplateResponse("staticVideo.html", {"request": request})
+
+
 @app.get("/video")
 def video_feed():
     try:
@@ -219,11 +224,11 @@ def get_accident_data():
 
 @app.get("/api/traffic-stats")
 def get_traffic_stats():
-    with live_data_lock:
-        data = live_data.get("traffic_stats", [])
-        logger.debug(f"/api/traffic-stats response: {data}")
-    if data:
-        return {"zones": data}
+    # with live_data_lock:
+    #     data = live_data.get("traffic_stats", [])
+    #     logger.debug(f"/api/traffic-stats response: {data}")
+    # if data:
+    #     return {"zones": data}
 
     # Fallback  data
     return {
@@ -356,6 +361,7 @@ def get_analytics():
             "data": [random.randint(0, 30) for _ in range(24)]
         }
     }
+
 
 
 
