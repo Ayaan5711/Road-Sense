@@ -224,11 +224,11 @@ def get_accident_data():
 
 @app.get("/api/traffic-stats")
 def get_traffic_stats():
-    # with live_data_lock:
-    #     data = live_data.get("traffic_stats", [])
-    #     logger.debug(f"/api/traffic-stats response: {data}")
-    # if data:
-    #     return {"zones": data}
+    with live_data_lock:
+        data = live_data.get("traffic_stats", [])
+        logger.debug(f"/api/traffic-stats response: {data}")
+    if data:
+        return {"zones": data}
 
     # Fallback  data
     return {
@@ -361,7 +361,6 @@ def get_analytics():
             "data": [random.randint(0, 30) for _ in range(24)]
         }
     }
-
 
 
 

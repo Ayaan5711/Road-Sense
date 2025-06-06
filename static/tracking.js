@@ -1,4 +1,5 @@
 // Panel Toggle Functionality
+
 document.addEventListener("DOMContentLoaded", function () {
   // Panel toggle functionality
   const leftToggle = document.querySelector(".left-toggle");
@@ -33,6 +34,40 @@ async function updateAllPanels() {
     updateAccidentPanel(),
     updateAnalyticsPanel(),
   ]);
+document.addEventListener('DOMContentLoaded', function() {
+    // Panel toggle functionality
+    const leftToggle = document.querySelector('.left-toggle');
+    const rightToggle = document.querySelector('.right-toggle');
+    const leftPanel = document.getElementById('left-panel');
+    const rightPanel = document.getElementById('right-panel');
+
+    leftToggle.addEventListener('click', () => {
+        leftPanel.classList.toggle('active');
+        leftToggle.classList.toggle('active');
+    });
+
+    rightToggle.addEventListener('click', () => {
+        rightPanel.classList.toggle('active');
+        rightToggle.classList.toggle('active');
+    });
+
+    // Initialize all panels
+    initializeTrafficPanel();
+    initializeAlertPanel();
+    initializeAccidentPanel();
+    initializeAnalyticsPanel();
+
+    // Set up periodic updates
+    setInterval(updateAllPanels, 5000);
+});
+
+async function updateAllPanels() {
+    await Promise.all([
+        updateTrafficPanel(),
+        updateAlertPanel(),
+        updateAccidentPanel(),
+        updateAnalyticsPanel()
+    ]);
 }
 
 // Traffic Panel Functions
@@ -47,7 +82,17 @@ async function updateTrafficPanel() {
   const trafficPanel = document.querySelector(".left-panel .panel-content");
   trafficPanel.innerHTML = data.zones
     .map(
-      (zone) => `
+      (zone) => 
+    await updateTrafficPanel());
+}
+
+async function updateTrafficPanel() {
+    const response = await fetch('/api/traffic-stats');
+    const data = await response.json();
+    
+    const trafficPanel = document.querySelector('.left-panel .panel-content');
+    trafficPanel.innerHTML = data.zones.map(zone => `
+
         <div class="zone-card">
             <h3>${zone.location}</h3>
             <div class="zone-stats">
