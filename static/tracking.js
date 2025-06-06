@@ -1,5 +1,4 @@
 // Panel Toggle Functionality
-
 document.addEventListener("DOMContentLoaded", function () {
   // Panel toggle functionality
   const leftToggle = document.querySelector(".left-toggle");
@@ -34,40 +33,6 @@ async function updateAllPanels() {
     updateAccidentPanel(),
     updateAnalyticsPanel(),
   ]);
-document.addEventListener('DOMContentLoaded', function() {
-    // Panel toggle functionality
-    const leftToggle = document.querySelector('.left-toggle');
-    const rightToggle = document.querySelector('.right-toggle');
-    const leftPanel = document.getElementById('left-panel');
-    const rightPanel = document.getElementById('right-panel');
-
-    leftToggle.addEventListener('click', () => {
-        leftPanel.classList.toggle('active');
-        leftToggle.classList.toggle('active');
-    });
-
-    rightToggle.addEventListener('click', () => {
-        rightPanel.classList.toggle('active');
-        rightToggle.classList.toggle('active');
-    });
-
-    // Initialize all panels
-    initializeTrafficPanel();
-    initializeAlertPanel();
-    initializeAccidentPanel();
-    initializeAnalyticsPanel();
-
-    // Set up periodic updates
-    setInterval(updateAllPanels, 5000);
-});
-
-async function updateAllPanels() {
-    await Promise.all([
-        updateTrafficPanel(),
-        updateAlertPanel(),
-        updateAccidentPanel(),
-        updateAnalyticsPanel()
-    ]);
 }
 
 // Traffic Panel Functions
@@ -82,40 +47,30 @@ async function updateTrafficPanel() {
   const trafficPanel = document.querySelector(".left-panel .panel-content");
   trafficPanel.innerHTML = data.zones
     .map(
-      (zone) => 
-    await updateTrafficPanel());
-}
-
-async function updateTrafficPanel() {
-    const response = await fetch('/api/traffic-stats');
-    const data = await response.json();
-    
-    const trafficPanel = document.querySelector('.left-panel .panel-content');
-    trafficPanel.innerHTML = data.zones.map(zone => `
-
-        <div class="zone-card">
-            <h3>${zone.location}</h3>
-            <div class="zone-stats">
-                <p>Total Vehicles: ${zone.total_vehicles}</p>
-                <p>Density Level: <span class="density-${(
-                  zone.density_level || "Unknown"
-                ).toLowerCase()}">${zone.density_level || "Unknown"}</span></p>
-                <p>Last Update: ${zone.last_update}</p>
-                <p>Average Speed: ${zone.average_speed} km/h</p>
-            </div>
-            <div class="vehicle-breakdown">
-                <h4>Vehicle Breakdown</h4>
-                <div class="breakdown-grid">
-                    <div>Cars: ${zone.vehicle_breakdown.cars}</div>
-                    <div>Buses: ${zone.vehicle_breakdown.buses}</div>
-                    <div>Trucks: ${zone.vehicle_breakdown.trucks}</div>
-                    <div>Two-wheelers: ${
-                      zone.vehicle_breakdown.two_wheelers
-                    }</div>
-                </div>
-            </div>
-        </div>
-    `
+      (zone) => `
+      <div class="zone-card">
+          <h3>${zone.location}</h3>
+          <div class="zone-stats">
+              <p>Total Vehicles: ${zone.total_vehicles}</p>
+              <p>Density Level: <span class="density-${zone.density_level.toLowerCase()}">${
+        zone.density_level
+      }</span></p>
+              <p>Last Update: ${zone.last_update}</p>
+              <p>Average Speed: ${zone.average_speed} km/h</p>
+          </div>
+          <div class="vehicle-breakdown">
+              <h4>Vehicle Breakdown</h4>
+              <div class="breakdown-grid">
+                  <div>Cars: ${zone.vehicle_breakdown.cars}</div>
+                  <div>Buses: ${zone.vehicle_breakdown.buses}</div>
+                  <div>Trucks: ${zone.vehicle_breakdown.trucks}</div>
+                  <div>Two-wheelers: ${
+                    zone.vehicle_breakdown.two_wheelers
+                  }</div>
+              </div>
+          </div>
+      </div>
+  `
     )
     .join("");
 }
@@ -131,59 +86,59 @@ async function updateAlertPanel() {
 
   const alertPanel = document.querySelector(".right-panel .panel-content");
   alertPanel.innerHTML = `
-        <div class="alert-section">
-            <h3>Overspeeding Alerts</h3>
-            ${data.overspeeding
-              .map(
-                (alert) => `
-                <div class="alert-item">
-                    <p>Vehicle ${alert.vehicle_id} - ${alert.speed} km/h in ${alert.zone}</p>
-                    <small>${alert.timestamp}</small>
-                </div>
-            `
-              )
-              .join("")}
-        </div>
-        <div class="alert-section">
-            <h3>Stopped Vehicles</h3>
-            ${data.stopped_vehicles
-              .map(
-                (vehicle) => `
-                <div class="alert-item">
-                    <p>Vehicle ${vehicle.vehicle_id} stopped for ${vehicle.duration} in ${vehicle.zone}</p>
-                </div>
-            `
-              )
-              .join("")}
-        </div>
-        <div class="alert-section">
-            <h3>Proximity Alerts</h3>
-            ${data.proximity_alerts
-              .map(
-                (alert) => `
-                <div class="alert-item">
-                    <p>Vehicles ${alert.vehicle1} and ${alert.vehicle2} - ${alert.distance} in ${alert.zone}</p>
-                </div>
-            `
-              )
-              .join("")}
-        </div>
-        <div class="alert-section">
-            <h3>Accident Alerts</h3>
-            ${data.accidents
-              .map(
-                (accident) => `
-                <div class="alert-item accident">
-                    <p>Accident in ${
-                      accident.zone
-                    } involving vehicles ${accident.vehicles.join(", ")}</p>
-                    <small>${accident.time}</small>
-                </div>
-            `
-              )
-              .join("")}
-        </div>
-    `;
+      <div class="alert-section">
+          <h3>Overspeeding Alerts</h3>
+          ${data.overspeeding
+            .map(
+              (alert) => `
+              <div class="alert-item">
+                  <p>Vehicle ${alert.vehicle_id} - ${alert.speed} km/h in ${alert.zone}</p>
+                  <small>${alert.timestamp}</small>
+              </div>
+          `
+            )
+            .join("")}
+      </div>
+      <div class="alert-section">
+          <h3>Stopped Vehicles</h3>
+          ${data.stopped_vehicles
+            .map(
+              (vehicle) => `
+              <div class="alert-item">
+                  <p>Vehicle ${vehicle.vehicle_id} stopped for ${vehicle.duration} in ${vehicle.zone}</p>
+              </div>
+          `
+            )
+            .join("")}
+      </div>
+      <div class="alert-section">
+          <h3>Proximity Alerts</h3>
+          ${data.proximity_alerts
+            .map(
+              (alert) => `
+              <div class="alert-item">
+                  <p>Vehicles ${alert.vehicle1} and ${alert.vehicle2} - ${alert.distance} in ${alert.zone}</p>
+              </div>
+          `
+            )
+            .join("")}
+      </div>
+      <div class="alert-section">
+          <h3>Accident Alerts</h3>
+          ${data.accidents
+            .map(
+              (accident) => `
+              <div class="alert-item accident">
+                  <p>Accident in ${
+                    accident.zone
+                  } involving vehicles ${accident.vehicles.join(", ")}</p>
+                  <small>${accident.time}</small>
+              </div>
+          `
+            )
+            .join("")}
+      </div>
+  `;
 }
 
 // Accident Detection Panel Functions
@@ -196,45 +151,38 @@ async function updateAccidentPanel() {
   const data = await response.json();
 
   const accidentPanel = document.getElementById("accident-panel");
-  if (!data.accidents.length) {
-    accidentPanel.innerHTML =
-      '<p class="no-accidents">No accident data available</p>';
-    return;
-  }
   accidentPanel.innerHTML = data.accidents
     .map(
       (accident) => `
-        <div class="accident-detection-card">
-            <div class="accident-header">
-                <h3>Accident Detected</h3>
-                <span class="confidence-badge">${
-                  accident.confidence_level
-                }</span>
-            </div>
-            <div class="accident-content">
-                <div class="accident-image">
-                    <div class="no-snapshot" style="display: none;">
-                        <i class="fas fa-image"></i>
-                        <p>Accident Snapshot is not available</p>
-                    </div>
-                    <img src="${accident.snapshot_url || ""}" 
-                         alt="Accident Snapshot" 
-                         onerror="this.style.display='none'; this.parentElement.querySelector('.no-snapshot').style.display='flex';"
-                         onload="this.style.display='block'; this.parentElement.querySelector('.no-snapshot').style.display='none';">
-                </div>
-                <div class="accident-details">
-                    <p>Zone: ${accident.zone}</p>
-                    <p>Time: ${accident.time}</p>
-                    <p>Confidence Score: ${accident.confidence_score}</p>
-                    <p>Prediction: ${accident.prediction}</p>
-                    <div class="accident-actions">
-                        <button class="replay-btn">Replay Last 10s</button>
-                        <button class="dispatch-btn">Simulate Emergency Dispatch</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `
+      <div class="accident-detection-card">
+          <div class="accident-header">
+              <h3>Accident Detected</h3>
+              <span class="confidence-badge">${accident.confidence_level}</span>
+          </div>
+          <div class="accident-content">
+              <div class="accident-image">
+                  <div class="no-snapshot" style="display: none;">
+                      <i class="fas fa-image"></i>
+                      <p>Accident Snapshot is not available</p>
+                  </div>
+                  <img src="${accident.snapshot_url || ""}" 
+                       alt="Accident Snapshot" 
+                       onerror="this.style.display='none'; this.parentElement.querySelector('.no-snapshot').style.display='flex';"
+                       onload="this.style.display='block'; this.parentElement.querySelector('.no-snapshot').style.display='none';">
+              </div>
+              <div class="accident-details">
+                  <p>Zone: ${accident.zone}</p>
+                  <p>Time: ${accident.time}</p>
+                  <p>Confidence Score: ${accident.confidence_score}</p>
+                  <p>Prediction: ${accident.prediction}</p>
+                  <div class="accident-actions">
+                      <button class="replay-btn">Replay Last 10s</button>
+                      <button class="dispatch-btn">Simulate Emergency Dispatch</button>
+                  </div>
+              </div>
+          </div>
+      </div>
+  `
     )
     .join("");
 }

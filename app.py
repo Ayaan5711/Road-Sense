@@ -183,11 +183,9 @@ def home(request: Request):
         txt_data = f.readlines()
     return templates.TemplateResponse("tracking.html", {"request": request, "txt_data": txt_data})
 
-
 @app.get("/static-video", response_class=HTMLResponse)
 def static_video_page(request: Request):
     return templates.TemplateResponse("staticVideo.html", {"request": request})
-
 
 @app.get("/video")
 def video_feed():
