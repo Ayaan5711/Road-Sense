@@ -5,22 +5,14 @@ import os
 import datetime
 import time
 
-# Global tracker for accident cooldowns
-last_accident_time = {}
+
 
 def process_frame(frame: np.ndarray, fps, colors, coordinates, view_transformers, byte_tracker, selected_classes,
-                  vehicle_model, accident_model, SOURCES, TARGETS, zone_annotators, box_annotators,
+                  vehicle_model, SOURCES, TARGETS, zone_annotators, box_annotators,
                   trace_annotators, line_zones, line_zone_annotators, label_annotators, lines_start,
                   lines_end, zones) -> tuple:
 
-    global last_accident_time
-    accident_detection_results = []  # Reset per frame
-
-    accident_model.model.names = {
-        0: 'Accident',
-        1: 'Accident',
-        2: 'Accident'
-    }
+    
 
     speed_labels = [], [], []
     zone_car_counts = [0] * len(zones)
@@ -36,9 +28,6 @@ def process_frame(frame: np.ndarray, fps, colors, coordinates, view_transformers
 
     annotated_frame = frame.copy()
 
-    # Run accident detection
-    accident_results = accident_model(frame, imgsz=640, verbose=False)[0]
-    accident_detections = sv.Detections.from_ultralytics(accident_results)
 
     if len(detections) == 0 or detections.tracker_id is None or detections.tracker_id.shape[0] == 0:
         height, width, _ = annotated_frame.shape
@@ -105,72 +94,7 @@ def process_frame(frame: np.ndarray, fps, colors, coordinates, view_transformers
 
         line_zone.trigger(detections=detections_filtered)
 
-    # Accident detection
-    try:
-        snapshot_folder = os.path.join("static", "accidents")
-        os.makedirs(snapshot_folder, exist_ok=True)
-        current_time = time.time()
-
-        for accident_det in accident_detections:
-            x1, y1, x2, y2 = map(int, accident_det[0][0:4])
-            confidence = float(accident_det[2])
-
-            if confidence > 0.7:
-                bbox_key = (x1 // 10, y1 // 10, x2 // 10, y2 // 10)
-                last_time = last_accident_time.get(bbox_key, 0)
-
-                if current_time - last_time >= 30:
-                    last_accident_time[bbox_key] = current_time
-                    label = f"Accident {confidence:.2f}"
-                    cv2.rectangle(annotated_frame, (x1, y1), (x2, y2), (0, 0, 255), 2)
-                    cv2.putText(annotated_frame, label, (x1, y1 - 10),
-                                cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
-
-                    margin = 50
-                    y1_crop = max(0, y1 - margin)
-                    y2_crop = min(frame.shape[0], y2 + margin)
-                    x1_crop = max(0, x1 - margin)
-                    x2_crop = min(frame.shape[1], x2 + margin)
-                    cropped_accident = annotated_frame[y1_crop:y2_crop, x1_crop:x2_crop]
-
-                    if cropped_accident.size > 0:
-                        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S_%f")
-                        snapshot_filename = f"accident_snapshot_{timestamp}.jpg"
-                        snapshot_url = os.path.join(snapshot_folder, snapshot_filename)
-                        cv2.imwrite(snapshot_url, cropped_accident)
-                    else:
-                        snapshot_url = "invalid_crop.jpg"
-
-                    accident_center = ((x1 + x2) // 2, (y1 + y2) // 2)
-                    accident_zone_index = None
-                    for i, zone in enumerate(zones):
-                        try:
-                            if zone.polygon.contains_point(accident_center):
-                                accident_zone_index = i
-                                break
-                        except Exception as zone_err:
-                            print(f"[Zone Detection Error] {zone_err}")
-
-                    zone_label = f"Zone {accident_zone_index + 1}" if accident_zone_index is not None else "Unknown"
-
-                    accident_detection_results.append({
-                        "bbox": [x1, y1, x2, y2],
-                        "confidence_level": f"{confidence * 100:.1f}%",
-                        "prediction": "Accident",
-                        "confidence_score": confidence,
-                        "snapshot_url": snapshot_url,
-                        "time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                        "zone": zone_label,
-                    })
-
-                    with open("accident-log.txt", "a") as accident_log:
-                        accident_log.write(
-                            f"Accident Detected - Coordinates: ({x1}, {y1}), ({x2}, {y2}), "
-                            f"Confidence: {confidence:.2f}, Snapshot: {snapshot_url}\n"
-                        )
-    except Exception as e:
-        print(f"[Accident Detection Block Error] {e}")
-
+    
     # Final overlays
     total_car_count = sum(zone_car_counts)
     height, width, _ = annotated_frame.shape
@@ -209,10 +133,10 @@ def process_frame(frame: np.ndarray, fps, colors, coordinates, view_transformers
         "alerts": {
             "overspeeding": [],
             "proximity_alerts": warning_message.strip().split('\n') if warning_message else [],
-            "accidents": accident_detection_results,
+            "accidents": [],
             "stopped_vehicles": []
         },
-        "accident_detection": accident_detection_results,
+        "accident_detection": [],
         "analytics": {
             "total_vehicles": total_car_count,
             "warnings": warning_message.strip(),

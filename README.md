@@ -1,129 +1,148 @@
+# 🚦 RoadSense: Intelligent Traffic Monitoring & Accident Detection System
 
-# Road-Sense: A Smart Traffic Monitoring System 🚦
+RoadSense is an AI-powered, real-time vehicle tracking, traffic analytics, and accident detection system. It leverages advanced computer vision techniques including YOLOv8 for vehicle detection, ByteTrack for tracking, and a custom DenseNet201 + ANN pipeline for accident classification. A FastAPI backend serves an interactive dashboard with live video streaming and real-time alerts.
 
-## Overview
+## 📷 Key Features
 
-**Road-Sense** is a real-time intelligent traffic monitoring and accident detection system. It processes live or recorded video feeds to detect, track, and analyze vehicles using deep learning. The system includes features like speed estimation, vehicle classification, congestion detection, and accident alerts—presented via a FastAPI-powered live dashboard.
+* 🚘 Vehicle Detection using YOLOv8
+* 📍 Zone-based Traffic Monitoring
+* 📊 Traffic Density & Vehicle Type Statistics
+* 🚦 Real-time Speed Estimation via Perspective Transform
+* ⚠️ Accident Detection using YOLOv8 + AABB + DenseNet201 + ANN Classifier
+* 🔊 Alerts for Overspeeding, Proximity, Stopped Vehicles & Accidents
+* 📝 Per-frame Logging to vehicle-tracking.txt and accident-log.txt
+* 🖥️ FastAPI Dashboard for Live Analytics and Stream Switching (live/static/accident)
 
-Built with:
-
-* **YOLOv8** for vehicle and accident detection
-* **OpenCV** and **Supervision** for video processing and annotation
-* **FastAPI** for serving live video streams and insights
-
----
-
-## 🔍 Key Features
-
-### 🚗 Real-Time Vehicle Detection & Tracking
-
-* Detects and tracks vehicles in traffic footage using YOLOv8
-* Counts and traces vehicles across defined zones
-
-### 🛑 Accident Detection
-
-* Uses a separate YOLOv8 model to detect accidents
-* Displays visual alerts on live stream
-
-### 📏 Speed Estimation
-
-* Estimates vehicle speed based on motion across zones
-* Issues alerts when speed limits are exceeded
-
-### 🛻 Vehicle Type Differentiation
-
-* Differentiates between cars, bikes, buses, trucks
-* Aggregates counts per vehicle type
-
-### 🚥 Traffic Congestion Detection
-
-* Monitors density and flow per lane/zone
-* Detects and warns of potential congestion
-
-### 🧊 Zone-Based Heatmaps *(optional enhancement)*
-
-* Visualizes traffic patterns over time
-
-### ⚠️ Proximity Alerts
-
-* Warns when vehicles are dangerously close
-
----
-
-## 🚀 Getting Started
-
-### 1. Clone the Repository
+## 📁 Project Structure
 
 ```bash
-git clone https://github.com/yourusername/road-sense.git
-cd road-sense
+RoadSense/
+├── app.py                    # FastAPI backend with endpoints
+├── models/
+│   ├── yolov8s.pt            # Vehicle Detection Model
+│   └── model_epoch_50.pth    # Accident Detection Model 
+├── src/
+|   ├── processing.py         # Core frame processing logic (detection, tracking, logging)
+│   ├── accident_detection.py # Modular accident detection pipeline
+│   ├── tracking_utils.py     # ByteTrack integration
+│   ├── video_utils.py        # YouTube/local stream handler
+│   ├── zone_utils.py         # Polygonal zone management
+│   ├── transform_utils.py    # Perspective transform & speed conversion
+├── static/
+│   ├── css/                  # Styling for dashboard
+│   └── js/                   # Optional: frontend scripts
+├── templates/
+│   ├── landing.html          # Welcome page
+│   ├── cameraAngles.html     # Choose camera mode
+│   └── tracking.html         # Live video + analytics display
+├── videos/
+│   ├── recorded_stream_large.mp4
+│   └── accident_t2.mp4
+├── vehicle-tracking.txt     # Per-frame traffic log
+├── accident-log.txt         # Confirmed accidents log
+├── requirements.txt         # Python dependencies
+└── README.md                # Project documentation
 ```
 
-### 2. Install Requirements
+## 🚀 How It Works
+
+1. 🎥 Capture video from YouTube or local source using vidgear/OpenCV.
+2. 🧠 Run YOLOv8 detection on each frame.
+3. 🎯 Track vehicles using ByteTrack.
+4. 🚗 Estimate speed using vertical position history + perspective transform.
+5. 🛑 Detect accidents using a pipeline:
+
+    AABB overlap → Crop pair → DenseNet201 feature extract → ANN prediction
+6. 💡 Overlay annotations, log results, and stream to FastAPI frontend.
+
+
+## 🖥️ System Architecture
+
+The application follows a modular pipeline architecture:
+
+1.  **Video Input:** The system captures frames from a video source (local file or live stream) using OpenCV.
+2.  **Detection & Tracking:** Each frame is passed to the YOLOv8 model for vehicle detection. The resulting detections are then fed into the ByteTrack algorithm to track objects across frames.
+3.  **Data Processing (`processing.py`):** Custom logic is applied to the tracked objects to:
+    -   Check which zone they are in.
+    -   Calculate their speed.
+    -   Check for proximity to other vehicles.
+    -   Count vehicles per zone and type.
+4.  **Accident Detection:** A separate pipeline runs for the accident-focused video mode, using a specialized model to identify crash events.
+5.  **FastAPI Backend (`app.py`):**
+    -   Serves the processed and annotated video stream.
+    -   Provides REST API endpoints for the frontend to fetch live data (traffic stats, alerts, analytics).
+6.  **Web Dashboard (UI):** A web browser renders the `tracking.html` template, which displays the video feed and uses JavaScript to periodically call the API endpoints to refresh the data dashboards.
+
+
+## 🧠 Accident Detection Pipeline
+
+* Detection: YOLOv8 bounding boxes
+* Collision Check: Axis-Aligned Bounding Box overlap
+* Feature Extraction: DenseNet201 (pretrained)
+* Classification: ANN model with confidence threshold (e.g., 0.82)
+* Result: Snapshot saved, accident-log.txt updated, alert sent to UI
+
+## 🖥️ FastAPI Endpoints
+
+* / : Landing page
+* /camera-angles : Choose mode (live / static / accident)
+* /set-camera-mode/{mode}
+* /video : MJPEG stream
+* /live-streaming : Dashboard with vehicle logs
+* /log : JSON log of all vehicle tracking data
+* /accident-log : JSON log of accidents
+* /api/traffic-stats : Per-zone stats
+* /api/alerts : Real-time alerts
+* /api/analytics : Graph analytics (counts, speed, type dist.)
+* /api/accident-detection : List of accident snapshot events
+
+## ⚙️ Installation
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/Ayaan5711/Road-Sense.git
+cd Road-Sense
+```
+
+2. Install dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3. Add Models
+3. Download YOLOv8 and DenseNet201 weights and place in appropriate folders.
 
-Place your models in the `models/` directory:
+4. Run the app:
 
-* `yolov8s.pt` – for vehicle detection
-* `best.pt` – your custom accident detection model
-
----
-
-## 🧪 Running the Application
-
-### A. Run the FastAPI Server with Auto-Browser Launch
 ```bash
 python app.py
 ```
-Your default browser will automatically open to:
-```bash
-http://127.0.0.1:8000/
-```
-### B. Manual Run (if auto-launch is not used)
-```bash
-uvicorn app:app --reload
-```
-Then open your browser and go to:
-``` bash
-http://127.0.0.1:8000/
-```
 
-* `/` – Landing page
-* `/live-streaming` – Dashboard with vehicle logs
-* `/video` – Live annotated video stream
+Then open: [http://127.0.0.1:8000](http://127.0.0.1:8000) in your browser.
 
----
+## 📦 Requirements
 
-## 🛠 Configuration
+* Python 3.8+
+* OpenCV
+* Ultralytics YOLO
+* Supervision
+* Torch + torchvision
+* FastAPI
+* Uvicorn
+* vidgear
+* scikit-learn, numpy, pandas
 
-Update `app.py` or relevant config files to:
+## 📸 Snapshots
 
-* Set your **video source** (YouTube link, IP camera, or file path)
-* Adjust **zones** or **speed thresholds** as needed
+All detected accidents save snapshots with cropped vehicles. These are useful for audits, retraining, and reports.
 
----
+## 📈 Example Use Cases
 
-## 🧾 Output
-
-* **Live Annotated Video Feed**
-  Displays:
-
-  * Vehicle bounding boxes with IDs, types, and speeds
-  * Accident detection alerts in real time
-
-* **`vehicle-tracking.txt`**
-  Logs vehicle detections, tracking IDs, zone transitions, and speed estimates.
-
-* **`accident-log.txt`**
-  Logs accident events detected by the model, including timestamps and zone locations.
-
----
-
+* Smart Traffic Monitoring by City Authorities
+* Accident Detection for Surveillance
+* Traffic Pattern Analytics for Urban Planning
+* Research in Intelligent Transport Systems (ITS)
 
 ## 📄 License
 
@@ -139,4 +158,10 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 * [FastAPI](https://fastapi.tiangolo.com/)
 * Special thanks to the traffic safety research community
 
+
+## 📬 Contact
+
+For questions or collaborations, please reach out to:
+
+* Team Decodians
 
