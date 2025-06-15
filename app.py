@@ -399,42 +399,42 @@ def get_traffic_stats():
             {
                 "zone_id": "Zone 1",
                 "location": "West Direction 1",
-                "total_vehicles": random.randint(50, 200),
+                "total_vehicles": random.randint(50, 100),
                 "density_level": random.choice(["Low", "Medium", "High"]),
                 "last_update": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                 "vehicle_breakdown": {
-                    "cars": random.randint(20, 100),
-                    "buses": random.randint(5, 20),
-                    "trucks": random.randint(10, 30),
-                    "two_wheelers": random.randint(15, 50)
+                    "cars": random.randint(10, 100),
+                    "buses": random.randint(5, 10),
+                    "trucks": random.randint(2, 10),
+                    "two_wheelers": random.randint(5, 10)
                 },
-                "average_speed": random.randint(30, 80)
+                "average_speed": random.randint(50, 80)
             },
             {
                 "zone_id": "Zone 2",
                 "location": "East Direction 1",
-                "total_vehicles": random.randint(50, 200),
+                "total_vehicles": random.randint(50, 100),
                 "density_level": random.choice(["Low", "Medium", "High"]),
                 "last_update": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                 "vehicle_breakdown": {
-                    "cars": random.randint(20, 100),
-                    "buses": random.randint(5, 20),
-                    "trucks": random.randint(10, 30),
-                    "two_wheelers": random.randint(15, 50)
+                    "cars": random.randint(10, 100),
+                    "buses": random.randint(5, 10),
+                    "trucks": random.randint(2, 10),
+                    "two_wheelers": random.randint(5, 10)
                 },
                 "average_speed": random.randint(30, 80)
             },
             {
                 "zone_id": "Zone 3",
                 "location": "East Direction 2",
-                "total_vehicles": random.randint(50, 200),
+                "total_vehicles": random.randint(50, 100),
                 "density_level": random.choice(["Low", "Medium", "High"]),
                 "last_update": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                 "vehicle_breakdown": {
-                    "cars": random.randint(20, 100),
-                    "buses": random.randint(5, 20),
-                    "trucks": random.randint(10, 30),
-                    "two_wheelers": random.randint(15, 50)
+                    "cars": random.randint(10, 100),
+                    "buses": random.randint(5, 10),
+                    "trucks": random.randint(2, 10),
+                    "two_wheelers": random.randint(5, 10)
                 },
                 "average_speed": random.randint(30, 80)
             }
@@ -450,7 +450,7 @@ def get_alerts():
     return {
         "overspeeding": [
             {
-                "vehicle_id": f"V{random.randint(1000, 9999)}",
+                "vehicle_id": f"V{random.randint(1, 50)}",
                 "speed": random.randint(80, 120),
                 "zone": f"Zone {random.randint(1, 3)}",
                 "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -458,15 +458,15 @@ def get_alerts():
         ],
         "stopped_vehicles": [
             {
-                "vehicle_id": f"V{random.randint(1000, 9999)}",
-                "duration": f"{random.randint(1, 10)} minutes",
+                "vehicle_id": f"V{random.randint(1, 50)}",
+                "duration": f"{random.randint(1, 5)} minutes",
                 "zone": f"Zone {random.randint(1, 3)}"
             } for _ in range(2)
         ],
         "proximity_alerts": [
             {
-                "vehicle1": f"V{random.randint(1000, 9999)}",
-                "vehicle2": f"V{random.randint(1000, 9999)}",
+                "vehicle1": f"V{random.randint(1, 50)}",
+                "vehicle2": f"V{random.randint(1, 50)}",
                 "distance": f"{random.randint(1, 5)} meters",
                 "zone": f"Zone {random.randint(1, 3)}"
             } for _ in range(2)
@@ -474,7 +474,7 @@ def get_alerts():
         "accidents": [
             {
                 "zone": f"Zone {random.randint(1, 3)}",
-                "vehicles": [f"V{random.randint(1000, 9999)}" for _ in range(2)],
+                "vehicles": [f"V{random.randint(1, 50)}" for _ in range(2)],
                 "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             }
         ]
