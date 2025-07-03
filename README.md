@@ -13,6 +13,10 @@ RoadSense is an AI-powered, real-time vehicle tracking, traffic analytics, and a
 * 📝 Per-frame Logging to vehicle-tracking.txt and accident-log.txt
 * 🖥️ FastAPI Dashboard for Live Analytics and Stream Switching (live/static/accident)
 
+## 📽️ Demo Video
+
+https://youtu.be/WGioho9cQrM
+
 ## 📁 Project Structure
 
 ```bash
